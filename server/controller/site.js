@@ -14,6 +14,7 @@ exports.create = function(req, res) {
 	var flyerID = req.body.flyerID,
 		siteID = util.randomStr();
 
+	if (!flyerID) return res.error('缺少 flyerID');
 	async.auto({
 		// 检验 flyerID 唯一性
 		checkFlyerID: function(cb) {
@@ -126,6 +127,25 @@ exports.listPV = function(req, res) {
 	// )
 };
 
+
+exports.updateRT = function(log, callback) {
+	var siteID = log.idsite,
+		refType = util.getRef(log), // TODO 改进refType以支持来自邮件等等
+		doc = {
+			'$inc': {
+				pv: log.weight,
+				_pv: 1
+			}
+		};
+
+	// 来源
+	doc.$inc['ref.' + refType] = log.weight;
+	doc.$inc['_ref.' + refType] = 1;
+
+	// 上传传单PV
+	// uploadPV(siteID)
+	siteDao.update({_id: siteID}, doc, callback);
+};
 
 
 

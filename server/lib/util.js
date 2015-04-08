@@ -1,7 +1,8 @@
 var path    = require('path'),
 	fs      = require('fs-extra'),
 	_       = require('lodash'),
-	moment  = require('moment');
+	moment  = require('moment'),
+	url 	= require('url');
 
 
 
@@ -19,6 +20,7 @@ exports.setContext = function(serverPath) {
 		dirPath: {
 			root: 	rootPath,
 			server: serverPath,
+			log: 	path.join(rootPath, 'log'),
 			config: configPath,
 			controller: path.join(serverPath, 'controller'),
 			dao: 	path.join(serverPath, 'dao'),
@@ -83,8 +85,12 @@ exports.tsFormat = function(date) {
 	return Number(moment(date).format("x"));
 };
 
+exports.lineTimeFormat = function(date) {
+	return getUTC(date).format("YYYYMMDDHHmmss");
+};
+
 function getUTC(date) {
-	return moment(date).utc().zone(-8);
+	return moment(date).utcOffset(-8);
 }
 
 exports.randomStr = function(length) {
@@ -96,7 +102,6 @@ exports.randomStr = function(length) {
 	}
 	return str;
 };
-
 
 
 exports.isPro = function() {
@@ -112,3 +117,22 @@ exports.errHandler = function(err, doc, callback) {
 	if (err) console.log(err);
 	callback(err, doc);
 };
+
+
+
+
+exports.getRef = function(log) {
+	if (log.ua) {
+		var reg = log.ua.toLowerCase().match(/MicroMessenger/i);
+		if (reg && reg.length && reg[0] === 'micromessenger') {
+			return 'weixin';
+		}
+	}
+
+	var host = '',
+		refUrl = log.urlref;
+		CONFIG_REF = context.config.REF;
+	if (refUrl) host = url.parse(refUrl).host;
+	return host && CONFIG_REF[host] ? CONFIG_REF[host] : 'websites';
+};
+

@@ -1,6 +1,6 @@
-module.exports = function(app, mw, site) {
+module.exports = function(app, router, mw, site) {
 
-	app.post('/site', site.create);
+	router.post('/site', site.create);
 
 	// app.get('/site/:siteID', site.get);
 	// app.get('/site/:siteID/pv', site.getPV) // 路由有改动

@@ -1,12 +1,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	path = require('path'),
-	url = require('url');
-
-var config  = context.config,
-	util    = context.util,
-	dirPath = context.dirPath,
-	filePath = context.filePath;
+	config  = context.config,
+	util    = context.util;
 
 var Number0 = {
 	type: Number,
@@ -17,7 +12,8 @@ var Number0 = {
 var schema = new Schema({
 	_id: {
 		type: String,
-		unique: true
+		unique: true,
+		sparse: true // 稀疏索引
 	},
 	flyerID: { // 传单 ID, former name
 		type: String,

@@ -1,11 +1,13 @@
 var path 	= require('path'),
 	fs 		= require('fs-extra'),
-	_ 		= require('lodash');
-
-var config 	= context.config,
+	_ 		= require('lodash'),
+	router 	= require('express').Router(),
+	config 	= context.config,
 	util 	= context.util,
 	dirPath = context.dirPath,
 	filePath = context.filePath;
+
+
 
 
 // 路由根目录
@@ -20,9 +22,10 @@ var routeMWPath = path.join(routeDirPath, 'middleware');
 var mw = require(routeMWPath);
 
 
-var homeCtrl = util.getCtrl('home');
-
 module.exports = function(app) {
+
+	// 所有路由均以 /api/analytics 开头
+	app.use('/api/analytics', router);
 
 	// 注册mapping文件夹中的路由
 	_.forEach(fs.readdirSync(routeMappingPath), function(routeFileName, index) {
@@ -31,10 +34,9 @@ module.exports = function(app) {
 				ctrlName = routeFileName.replace('.js', ''),
 				ctrl = util.getCtrl(ctrlName);
 
-			require(routeFilePath)(app, mw, ctrl);
+			require(routeFilePath)(app, router, mw, ctrl);
 		}
 	});
 
-	app.get('*', homeCtrl.getIndex);
 
 };

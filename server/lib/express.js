@@ -1,6 +1,5 @@
 var path            = require('path'),
 	express         = require('express'),
-	router 			= express.Router(),
 	compression     = require('compression'),
 	cookieParser    = require('cookie-parser'),
 	bodyParser      = require('body-parser'),
@@ -32,13 +31,28 @@ module.exports = function(app, passport, mongoose) {
 	// res的中间件
 	app.use(function(req, res, next) {
 		res.success = function(data) {
-			res.json(data);
+			return res.json({
+				code: 200,
+				msg: data
+			});
 		};
-		res.successMsg = function(data) {
-			res.json({msg: data});
+		res.error = function(data) {
+			return res.json({
+				code: 15000,
+				msg: data
+			});
 		};
-		res.errorMsg = function(data) {
-			res.status(500).json({msg: data});
+		res.pSuccess = function(data) {
+			return res.jsonp({
+				code: 200,
+				msg: data
+			});
+		};
+		res.pError = function(data) {
+			return res.jsonp({
+				code: 15000,
+				msg: data
+			});
 		};
 		next();
 	});
@@ -55,8 +69,8 @@ module.exports = function(app, passport, mongoose) {
 	app.use(bodyParser.json());
 	app.use(methodOverride());
 
-	// 所有路由均以 /api/analytics 开头
-	app.use('/api/analytics', router);
+
+
 
 	// Node.js middleware for handling `multipart/form-data`.
 	app.use(multer());

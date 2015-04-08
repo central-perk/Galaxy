@@ -28,7 +28,17 @@ DaoBase = (function() {
 					return errHandler(err, doc, callback);
 				});
 			},
-
+			update: function(conditions, doc, callback) {
+				if (doc._id) delete update._id;
+				Model.update(conditions, doc, {}, function(err, numberAffected, raw) {
+					return errHandler(err, raw, callback);
+				});
+			},
+			remove: function(conditions, callback) {
+				Model.remove(conditions, function(err) {
+					return errHandler(err, null, callback);
+				});
+			},
 			// 以下均未复写
 			createBySave: function(doc, callback) {
 				var model;
@@ -89,12 +99,6 @@ DaoBase = (function() {
 					return callback(null, model);
 				});
 			},
-			remove: function(query, callback) {
-				Model.remove(query, function(error) {
-					if (error) return callback(error);
-					return callback(null);
-				});
-			},
 			fakeDelete: function(query, callback) {
 				Model.update(query, {
 					deleted: 1
@@ -103,15 +107,7 @@ DaoBase = (function() {
 					return callback(null);
 				});
 			},
-			update: function(conditions, update, options, callback) {
-				if (update._id) {
-					delete update._id;
-				}
-				Model.update(conditions, update, options, function(error) {
-					if (error) return callback(error);
-					return callback(null);
-				});
-			},
+
 			list: function(options, sort, callback) {
 				var criteria = options.criteria || {},
 					seq;
