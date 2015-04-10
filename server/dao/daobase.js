@@ -18,6 +18,11 @@ DaoBase = (function() {
 					return errHandler(err, raw, callback);
 				});
 			},
+			find: function(conditions, callback) {
+				Model.find(conditions, function(err, doc) {
+					return errHandler(err, doc, callback);
+				});
+			},
 			findOne: function(conditions, callback) {
 				Model.findOne(conditions, function(err, doc) {
 					return errHandler(err, doc, callback);
@@ -39,6 +44,12 @@ DaoBase = (function() {
 					return errHandler(err, null, callback);
 				});
 			},
+			count: function(conditions, callback) {
+				Model.count(conditions, function(error, count) {
+					return errHandler(err, count, callback);
+				});
+			},
+
 			// 以下均未复写
 			createBySave: function(doc, callback) {
 				var model;
@@ -50,38 +61,6 @@ DaoBase = (function() {
 			save: function(model, callback) {
 				model.save(function(error) {
 					if (error) return callback(error);
-					return callback(null, model);
-				});
-			},
-			getById: function(id, callback) {
-				Model.findOne({
-					_id: id
-				}, function(error, model) {
-					if (error) return callback(error, null);
-					return callback(null, model);
-				});
-			},
-			countByQuery: function(query, callback) {
-				Model.count(query, function(error, model) {
-					if (error) return callback(error, null);
-					return callback(null, model);
-				});
-			},
-			getByQuery: function(query, fileds, opt, callback) {
-				Model.find(query, fileds, opt, function(error, model) {
-					if (error) return callback(error, null);
-					return callback(null, model);
-				});
-			},
-			getOneByID: function(_id, fileds, opt, callback) {
-				Model.findOne({_id: _id}, fileds, opt, function(error, model) {
-					if (error) return callback(error, null);
-					return callback(null, model);
-				});
-			},
-			getOneByQuery: function(query, fileds, opt, callback) {
-				Model.findOne(query, fileds, opt, function(error, model) {
-					if (error) return callback(error, null);
 					return callback(null, model);
 				});
 			},

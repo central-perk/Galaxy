@@ -10,13 +10,27 @@ module.exports = {
 			maxAge: 86400000 // 24h
 			// maxAge: 2592000000 // 30day
 		},
-		db: {
-			name: 'echuandan_analytics'
-		}
+	},
+	KUE: {
+		maxProcess: 1, // 队列同时处理的文件数量
 	},
 	STORAGE: {
-		maxProcess: 1, // 队列同时处理的文件数量
+		// maxLines: 50 // 一次入库操作的数据行数
 		maxLines: 50 // 一次入库操作的数据行数
+	},
+	LOGFILE: {
+		status: {
+			writeable: 10, //可写入
+			unstorage: 20, //待入库
+			storaging: 30, //入库中
+			storaged: 40 //已入库
+		}
+	},
+	CACHE: {
+		expire: {
+			writeableLogFile: 300000, // 5min
+			flyerID: 300000, // 5min
+		}
 	},
 	PV: {
 		weight: [9, 15]
@@ -41,18 +55,36 @@ module.exports = {
 		'google.com':           	'search',
 		'www.google.com':           'search'
 	},
-	LOGFILE: {
-		status: {
-			writeable: 10, //可写入
-			unstorage: 20, //待入库
-			storaging: 30, //入库中
-			storaged: 40 //已入库
+	UA: {
+		device: {
+			desktop: 10,
+			mobile: 20,
+			tablet: 30,
+			proxy: 40
 		},
-		maxSize: 500000
-	},
-	CACHE: {
-		expire: {
-			writeableLogFile: 300000 // 5min
+		os:{
+			iOS: 10,
+			Android: 20,
+			'Windows Phone': 30,
+			'Mac OS X': 40,
+			Windows: 50,
+			Linux: 60,
+			other: 70
+		},
+		browser: {
+			Chrome: 10,
+			Safari: 20,
+			'Internet Explorer': 30,
+			'Mobile Internet Explorer': 40,
+			Opera: 50,
+			'Opera Mobile': 60,
+			Firefox: 70,
+			'Firefox Mobile': 80,
+			'UC Web': 90,
+			other: 100
 		}
-	}
+	},
+	CVAR: {
+		channel: '1'
+	},
 };

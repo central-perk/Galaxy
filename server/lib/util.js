@@ -89,8 +89,15 @@ exports.lineTimeFormat = function(date) {
 	return getUTC(date).format("YYYYMMDDHHmmss");
 };
 
+exports.diffMinutes = function(date1, date2) {
+	date1 = moment(date1);
+	date2 = date2 || moment();
+	return Math.floor(Math.abs(date1.diff(date2, 'minutse')) / 60000);
+
+};
+
 function getUTC(date) {
-	return moment(date).utcOffset(-8);
+	return moment(date).utcOffset(8);
 }
 
 exports.randomStr = function(length) {

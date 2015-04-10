@@ -1,6 +1,7 @@
 var async 		= require('async'),
 	request 	= require('request'),
 	cache 		= require('memory-cache'),
+	_ 			= require('lodash'),
 	config      = context.config,
 	util        = context.util,
 	dirPath     = context.dirPath,
@@ -97,34 +98,42 @@ exports.getOverview = function(req, res) {
 };
 
 
+console.log( config.CACHE.expire.flyerID)
+
 exports.listPV = function(req, res) {
-	// if req.query.flyerIDs
-	// 	flyerIDs = req.query.flyerIDs.split(',')
-	// 	allCachedIDs = cache.keys()
-	// 	cachedIDs = _.intersection(flyerIDs, allCachedIDs)
-	// 	uncachedIDs = _.difference(flyerIDs, allCachedIDs)
 
-	// 	# 获取已经被缓存且需要返回的site
-	// 	cachedSites = _.reduce cachedIDs, (before, after)->
-	// 		before.push(cache.get(after))
-	// 		return before
-	// 	, []
+	if (req.query.flyerIDs) {
+		var flyerIDs = req.query.flyerIDs.split(','),
+			allCachedIDs = cache.keys(),
+			cachedIDs = _.intersection(flyerIDs, allCachedIDs),
+			uncachedIDs = _.difference(flyerIDs, allCachedIDs);
 
-	// 	query = { name: {$in: uncachedIDs}}
-	// else
-	// 	query = {}
-	// siteDao.listPV(query, (err, uncachedSites)->
-	// 	if !err and uncachedSites
 
-	// 		# 将得到的数据缓存，并设置过期时间
-	// 		_.forEach uncachedSites, (site)->
-	// 			cache.put(site.name, site, config.CACHE.expire) # 5min
-	// 		aSites = _.merge(uncachedSites, cachedSites)
 
-	// 		res.pSuccess(aSites)
-	// 	else
-	// 		res.error('页面不存在或者发生错误')
-	// )
+		// 获取已经被缓存且需要返回的site
+		var cachedSites = _.reduce(cachedIDs, function(before, after) {
+			before.push(cache.get(after));
+			return before;
+		}, []);
+
+
+
+		siteDao.listPV({flyerID: {$in: uncachedIDs}}, function(err, uncachedSites) {
+			if (!err) {
+				// 将得到的数据缓存，并设置过期时间
+
+				_.forEach(uncachedSites, function(site) {
+					cache.put(site.flyerID, site, config.CACHE.expire.flyerID); // 5min
+				});
+				var allSites = _.merge(uncachedSites, cachedSites);
+				res.pSuccess(allSites);
+			} else {
+				res.pSuccess([]);
+			}
+		});
+	} else {
+		res.pSuccess([]);
+	}
 };
 
 
@@ -143,9 +152,37 @@ exports.updateRT = function(log, callback) {
 	doc.$inc['_ref.' + refType] = 1;
 
 	// 上传传单PV
-	// uploadPV(siteID)
+	uploadPV(siteID);
+
 	siteDao.update({_id: siteID}, doc, callback);
 };
+
+
+
+function uploadPV(siteID) {
+	siteDao.findByID(siteID, function(err, site) {
+		if (err) return;
+		if (site && site.updateTime && site.flyerID && util.diffMinutes(site.updateTime) > 10) {
+			// 更新PV最新上传时间
+			siteDao.update({
+				_id: siteID
+			}, {
+				updateTime: (new Date()).getTime()
+			}, function(err) {
+				if (err) console.log(err);
+			});
+
+			request.put({
+				url: config.HOST.ecd + '/api/flyers/' + site.flyerID + '/pv',
+				form: {
+					pv: site.pv
+				}
+			}, function(err, res, data){
+				if (err) console.log(err);
+			});
+		}
+	});
+}
 
 
 

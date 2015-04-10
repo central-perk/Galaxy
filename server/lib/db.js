@@ -8,7 +8,7 @@ var config  = context.config,
 	filePath = context.filePath;
 
 var DB_CONFIG = config.APP.db,
-	DB_HOST = 'mongodb://' + DB_CONFIG.host + ':' + DB_CONFIG.port + '/' + DB_CONFIG.name + '_' + context.env;
+	DB_HOST = 'mongodb://' + DB_CONFIG.host + ':' + DB_CONFIG.port + '/' + DB_CONFIG.name;
 
 
 

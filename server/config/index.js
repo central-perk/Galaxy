@@ -6,6 +6,9 @@ var path = require('path'),
 	CONFIG_ENV = require(path.join(__dirname, 'env', process.env.NODE_ENV)) || {};
 
 
+CONFIG = _.merge(CONFIG, CONFIG_ALL);
+CONFIG = _.merge(CONFIG, CONFIG_ENV);
+
 
 // 需要改进成遍历所有文件夹
 _.forEach(fs.readdirSync(__dirname), function(fileName) {
@@ -15,8 +18,7 @@ _.forEach(fs.readdirSync(__dirname), function(fileName) {
 });
 
 
-CONFIG = _.merge(CONFIG, CONFIG_ALL);
-CONFIG = _.merge(CONFIG, CONFIG_ENV);
+
 
 
 

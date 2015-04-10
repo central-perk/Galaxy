@@ -30,6 +30,10 @@ require(filePath.db).connect(function(mongoose) {
 	// 处理日志任务队列
 	kueCtrl.processLog();
 
+	// 处理入库任务队列
+	kueCtrl.processStorage();
+
+
 	app.listen(app.get('port'), function() {
 		console.log('Listen on port ' + app.get('port'));
 	});

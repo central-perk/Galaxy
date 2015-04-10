@@ -10,7 +10,7 @@ var Number0 = {
 
 
 var schema = new Schema({
-	_id: {
+	_id: { // former siteID
 		type: String,
 		unique: true,
 		sparse: true // 稀疏索引
@@ -41,7 +41,7 @@ var schema = new Schema({
 		search: Number0,
 		email: Number0
 	},
-	createTime: { // 创建时间, former ts
+	updateTime: { // 更新时间, former ts
 		type: Date,
 		get: util.dateTimeFormat,
 		default: Date.now

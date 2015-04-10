@@ -21,9 +21,8 @@ exports.getOverviewByID = function(siteID, callback) {
 	});
 };
 
-
-// exports.listPV = function(query, callback) {
-// 	Model.findOne({_id: siteID}, '_id pv ref', function(err, doc) {
-// 		return util.errHandler(err, doc, callback);
-// 	});
-// };
+exports.listPV = function(query, callback) {
+	Model.find(query, '_id pv flyerID', function(err, doc) {
+		return util.errHandler(err, doc, callback);
+	});
+};

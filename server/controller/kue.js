@@ -4,8 +4,8 @@ var kue 		= require('kue'),
 	config      = context.config,
 	util        = context.util,
 	siteCtrl 	= util.getCtrl('site'),
-	logFileCtrl = util.getCtrl('logFile');
-
+	logFileCtrl = util.getCtrl('logFile'),
+	storageCtrl = util.getCtrl('storage');
 
 
 // 加入日志任务队列
@@ -23,6 +23,7 @@ exports.enqueueLog = function(log) {
 
 // 加入入库任务队列
 exports.enqueueStorage = function(logFile) {
+	console.log('enqueueStorage');
 	jobs.create('storage', {logFile: logFile})
 		.attempts(3)
 		.removeOnComplete(true)
@@ -36,7 +37,7 @@ exports.enqueueStorage = function(logFile) {
 
 // 处理日志任务队列
 exports.processLog = function() {
-	jobs.process('log', config.STORAGE.maxProcess, function(job, done) {
+	jobs.process('log', config.KUE.maxProcess, function(job, done) {
 		var log = job.data.log;
 		async.waterfall([
 			function(cb) { // 实时信息更新
@@ -53,17 +54,19 @@ exports.processLog = function() {
 };
 
 
-// # 入库任务的处理
-// # jobs.process('storage', config.STORAGE.maxProcess, (job, done)->
-// # 	oLogFile = job.data.logFile
-// # 	storage = utils.getCtrl('storage')
-// # 	console.log 'oLogFile.name', oLogFile.name
-// # 	storage.store(oLogFile, (err)->
-// # 		if !err
-// # 			console.log '数据入库成功'
-// # 		done()
-// # 	)
-// # )
-
+// 入库任务的处理
+exports.processStorage = function() {
+	jobs.process('storage', config.KUE.maxProcess, function(job, done) {
+		var logFile = job.data.logFile;
+		storageCtrl.store(logFile, function(err) {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log('数据入库成功');
+			}
+			done();
+		});
+	});
+};
 
 

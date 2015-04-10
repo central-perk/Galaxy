@@ -39,8 +39,9 @@ function writeableLogFilePath(callback) {
 	async.waterfall([
 		// 获得数据库中可写入日志文件信息
 		function(cb) {
-			if (cache.get('writeableLogFile')) {
-				cb(null, cache.get('writeableLogFile'));
+			var logCache = cache.get('writeableLogFile');
+			if (logCache) {
+				cb(null, logCache);
 			} else {
 				logFileDao.findOne({status: LOGFILE_STATUS.writeable}, function(err, log) {
 					if (!err && !_.isEmpty(log)) {
@@ -68,13 +69,18 @@ function writeableLogFilePath(callback) {
 		function(logFilePath, cb) {
 			try {
 				var logFileSize = fs.statSync(logFilePath).size;
+				console.log(logFileSize);
 				if (LOGFILE_MAXSIZE > logFileSize) {
 					cb(null, logFilePath);
 				} else {
-					logFileDao.update({name: logFileName}, {status: LOGFILE_STATUS.unstorage}, function(err, raw) {
+					// 删除缓存
+					cache.del('writeableLogFile');
+					// 更新文件状态后加入队列
+					exports.updateStatus(logFileName, LOGFILE_STATUS.unstorage, function(err, raw) {
 						if (!err) {
 							kueCtrl.enqueueStorage({
 								name: logFileName,
+								path: logFilePath,
 								status: LOGFILE_STATUS.unstorage
 							});
 						}
@@ -99,7 +105,7 @@ function writeableLogFilePath(callback) {
 
 // 创建新的日志文件并返回路径
 function newLogFile(callback) {
-	var logFileName = util.lineTimeFormat() + '.log',
+	var logFileName = util.lineTimeFormat() + util.randomStr() + '.log',
 		logFilePath = path.join(logPath, logFileName);
 
 	if (fs.existsSync(logFilePath)) {
@@ -123,6 +129,22 @@ function newLogFile(callback) {
 	}
 }
 
+// 更新日志文件状态
+exports.updateStatus = function(name, status, callback) {
+	logFileDao.update({name: name}, {status: status}, callback);
+};
+
+// 获取日志文件（待入库，入库中）
+exports.getStoreLogFile = function(callback) {
+	logFileDao.find({
+		status: {
+			'$in': [
+				LOGFILE_STATUS.unstorage,
+				LOGFILE_STATUS.storaging
+			]
+		}
+	}, callback);
+};
 
 // module.exports =
 // 	count: (query, callback)->
