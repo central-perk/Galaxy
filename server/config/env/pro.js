@@ -8,7 +8,7 @@ module.exports = {
 
 	},
 	LOGFILE: {
-		maxSize: 500000
+		maxSize: 500000 // 500k, 约 800+
 	},
 	HOST: {
 		ecd: 'http://echuandan.com'

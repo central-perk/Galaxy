@@ -69,7 +69,6 @@ function writeableLogFilePath(callback) {
 		function(logFilePath, cb) {
 			try {
 				var logFileSize = fs.statSync(logFilePath).size;
-				console.log(logFileSize);
 				if (LOGFILE_MAXSIZE > logFileSize) {
 					cb(null, logFilePath);
 				} else {

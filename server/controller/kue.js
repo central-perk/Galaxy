@@ -23,7 +23,6 @@ exports.enqueueLog = function(log) {
 
 // 加入入库任务队列
 exports.enqueueStorage = function(logFile) {
-	console.log('enqueueStorage');
 	jobs.create('storage', {logFile: logFile})
 		.attempts(3)
 		.removeOnComplete(true)
@@ -62,7 +61,7 @@ exports.processStorage = function() {
 			if (err) {
 				console.log(err);
 			} else {
-				console.log('数据入库成功');
+				console.log(logFile.name, '数据入库成功');
 			}
 			done();
 		});
