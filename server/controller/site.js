@@ -97,9 +97,6 @@ exports.getOverview = function(req, res) {
 	});
 };
 
-
-console.log( config.CACHE.expire.flyerID)
-
 exports.listPV = function(req, res) {
 
 	if (req.query.flyerIDs) {
@@ -108,20 +105,16 @@ exports.listPV = function(req, res) {
 			cachedIDs = _.intersection(flyerIDs, allCachedIDs),
 			uncachedIDs = _.difference(flyerIDs, allCachedIDs);
 
-
-
 		// 获取已经被缓存且需要返回的site
 		var cachedSites = _.reduce(cachedIDs, function(before, after) {
 			before.push(cache.get(after));
 			return before;
 		}, []);
 
-
-
 		siteDao.listPV({flyerID: {$in: uncachedIDs}}, function(err, uncachedSites) {
 			if (!err) {
-				// 将得到的数据缓存，并设置过期时间
 
+				// 将得到的数据缓存，并设置过期时间
 				_.forEach(uncachedSites, function(site) {
 					cache.put(site.flyerID, site, config.CACHE.expire.flyerID); // 5min
 				});

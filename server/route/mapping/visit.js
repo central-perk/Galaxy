@@ -1,7 +1,6 @@
-module.exports = function(app, router, mw, main) {
+module.exports = function(app, router, mw, visit) {
 
-	// router.get('/visit/pv', visit.listPV);
-	// router.get('/visit/ref', visit.listRef);
-	// router.get('/visit/traffic', visit.listTraffic);
+	router.get('/visit/ref', visit.listRef);
+	router.get('/visit/traffic', visit.listTraffic);
 
 };

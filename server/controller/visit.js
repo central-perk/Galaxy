@@ -4,6 +4,7 @@ var path 		= require('path'),
 	_ 			= require('lodash'),
 	lbs 		= require('node-qqwry'),
 	useragent 	= require(context.filePath.useragent),
+	logger 		= require(context.filePath.logger),
 	config      = context.config,
 	util        = context.util,
 	visitDao 	= util.getDao('visit'),
@@ -12,167 +13,234 @@ var path 		= require('path'),
 	OS_TYPE 	= config.UA.os,
 	BROWSER_TYPE = config.UA.browser;
 
-// logger = require(path.join(libsPath, 'logger', 'index.js'))
 
 
 
-// listTraffic: (req, res)->
-// 	startTime = new Date();
 
-// 	query = req.query
-// 	siteID = query.siteID
-// 	st = utils.getStartTS(query.st)
-// 	et = utils.getEndTS(query.et) or st
-// 	diffDay = utils.diffDay(st, et, true)
-// 	categories = getCategories(st, et, diffDay)
-// 	# 查询一天
-// 	if not diffDay
-// 		visitDao.aggregate([{
-// 			$match: {
-// 				siteID
-// 				visitTS: {
-// 					$gt: st,
-// 					$lt: et
-// 				}
-// 			}
-// 		}, {
-// 			$project : {
-// 				weight: $ifNull: [ "$weight", 1]
-// 				visitorID: '$visitorID'
-// 				visitTS: $add: ["$visitTS", 8*60*60*1000] #消除时区问题
-// 			}
-// 		}, {
-// 			$group: {
-// 				_id: {
-// 					hour: {$hour: '$visitTS'}
-// 				}
-// 				pv: {$sum: '$weight'}
-// 				uv: {$addToSet: '$visitorID'}
-// 			}
-// 		}, {
-// 			$project : {
-// 				hour: '$_id.hour'
-// 				pv: '$pv'
-// 				uv: {$size: '$uv'}
-// 			}
-// 		}], (err, data)->
-// 			tmp = {
-// 				pv: {}
-// 				uv: {}
-// 			}
-// 			pvSeriesData = {
-// 				name: '浏览量'
-// 				data: []
-// 			}
-// 			uvSeriesData = {
-// 				name: '访客数'
-// 				data: []
-// 			}
-// 			sum = {
-// 				pv: 0,
-// 				uv: 0
-// 			}
-// 			_.each(data, (record, index)->
-// 				tmp.pv[record.hour] = record.pv
-// 				tmp.uv[record.hour] = record.uv
-// 				sum.pv += record.pv
-// 				sum.uv += record.uv
-// 			)
-// 			# ADD
-// 			sum.uv = Math.ceil(sum.pv * 0.9) || 1
-// 			_.each(categories, (category)->
-// 				count = tmp.pv?[category] or 0
-// 				pvSeriesData.data.push(count)
-// 				# ADD
-// 				uvSeriesData.data.push(calcUV(count))
-// 				# count = tmp.uv?[category] or 0
-// 				# uvSeriesData.data.push(count)
-// 			)
-// 			seriesData = [pvSeriesData, uvSeriesData]
+exports.listTraffic = function(req, res) {
+	var startTime = new Date(); // 用于日志
+	var query = req.query,
+		siteID = query.siteID,
+		st = util.getStartTime(query.st),
+		et = util.getEndTime(query.et) || st,
+		diffDays = util.diffDays(st, et, true),
+		categories = getCategories(st, et, diffDays);
 
-// 			logger.info('call_interface', {
-// 				time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
-// 				interface_url: req.host + req.originalUrl
-// 			})
+	var pvSeriesData = {
+		name: '浏览量',
+		data: []
+	};
+	var uvSeriesData = {
+		name: '访客数',
+		data: []
+	};
+	var sum = {
+		pv: 0,
+		uv: 0
+	};
 
-// 			res.success({categories, seriesData, sum})
-// 		)
-// 	else
-// 		visitDao.aggregate([{
-// 			$match: {
-// 				siteID
-// 				visitTS: {
-// 					$gt: st,
-// 					$lt: et
-// 				}
-// 			}
-// 		}, {
-// 			$project : {
-// 				weight: $ifNull: [ "$weight", 1]
-// 				visitorID: '$visitorID'
-// 				visitTS: $add: ["$visitTS", 8*60*60*1000] #消除时区问题
-// 			}
-// 		}, {
-// 			$group: {
-// 				_id: {
-// 					year:{$year: '$visitTS'},
-// 					month:{$month: '$visitTS'},
-// 					day:{$dayOfMonth: '$visitTS'}
-// 				},
-// 				pv: {$sum: '$weight'}
-// 				uv: {$addToSet: '$visitorID'}
-// 				# count: {$sum: 1}
-// 			}
-// 		}, {
-// 			$project : {
-// 				year: '$_id.year'
-// 				month: '$_id.month'
-// 				day: '$_id.day'
-// 				pv: '$pv'
-// 				uv: {$size: '$uv'}
-// 			}
-// 		}], (err, data)->
-// 			tmp = {
-// 				pv: {}
-// 				uv: {}
-// 			}
-// 			pvSeriesData = {
-// 				name: '浏览量'
-// 				data: []
-// 			}
-// 			uvSeriesData = {
-// 				name: '访客数'
-// 				data: []
-// 			}
-// 			sum = {
-// 				pv: 0,
-// 				uv: 0
-// 			}
-// 			_.each(data, (record)->
-// 				tmp.pv[[record.month, record.day].join('-')] = record.pv
-// 				tmp.uv[[record.month, record.day].join('-')] = record.uv
-// 				sum.pv += record.pv
-// 				sum.uv += record.uv
-// 			)
-// 			# ADD
-// 			sum.uv = Math.ceil(sum.pv * 0.9) || 1
-// 			_.each(categories, (category)->
-// 				count = tmp.pv?[category] or 0
-// 				pvSeriesData.data.push(count)
-// 				# ADD
-// 				uvSeriesData.data.push(calcUV(count))
-// 				# count = tmp.uv?[category] or 0
-// 				# uvSeriesData.data.push(count)
-// 			)
-// 			seriesData = [pvSeriesData, uvSeriesData]
+	// 查询一天
+	if (!diffDays) {
+		visitDao.aggregate([{
+			$match: {
+				siteID: siteID,
+				visitTS: {
+					$gt: st,
+					$lt: et
+				}
+			}
+		}, {
+			$project : {
+				weight: {
+					$ifNull: ["$weight", 1]
+				},
+				// visitorID: '$visitorID', // uv会用到
+				visitTS: {
+					$add: ["$visitTS", 8*60*60*1000] // 消除时区问题
+				}
+			}
+		}, {
+			$group: {
+				_id: {
+					hour: {$hour: '$visitTS'}
+				},
+				pv: {$sum: '$weight'},
+				// uv: {$addToSet: '$visitorID'}, // 暂时先注释
+			}
+		}, {
+			$project : {
+				hour: '$_id.hour',
+				pv: '$pv',
+				// uv: {$size: '$uv'}, // 暂时先注释
+			}
+		}], function(err, data) {
+			/**
+			 * [ { _id: { hour: 13 }, pv: 64, hour: 13 },
+			 *   { _id: { hour: 11 }, pv: 15, hour: 11 } ]
+			 */
 
-// 			logger.info('call_interface', {
-// 				time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
-// 				interface_url: req.host + req.originalUrl
-// 			})
+			_.forEach(categories, function(category) {
+				var count = _.result(_.find(data, 'hour', category), 'pv') || 0;
+				pvSeriesData.data.push(count);
+				uvSeriesData.data.push(calcUV(count));
+				sum.pv += count;
+				sum.uv += calcUV(count);
+			});
+			var seriesData = [pvSeriesData, uvSeriesData];
 
-// 			res.success({categories, seriesData, sum})
-// 		)
+			logger.info('call_interface', {
+				time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
+				interface_url: req.hostname + req.originalUrl
+			});
+
+			res.success({categories: categories, seriesData: seriesData, sum: sum});
+		});
+	} else {
+		visitDao.aggregate([{
+			$match: {
+				siteID: siteID,
+				visitTS: {
+					$gt: st,
+					$lt: et
+				}
+			}
+		}, {
+			$project : {
+				weight: {
+					$ifNull: ["$weight", 1]
+				},
+				visitorID: '$visitorID',
+				visitTS: {
+					$add: ["$visitTS", 8*60*60*1000] // 消除时区问题
+				}
+			}
+		}, {
+			$group: {
+				_id: {
+					year: {$year: '$visitTS'},
+					month: {$month: '$visitTS'},
+					day: {$dayOfMonth: '$visitTS'}
+				},
+				pv: {$sum: '$weight'},
+				uv: {$addToSet: '$visitorID'} // 暂时先注释
+			}
+		}, {
+			$project : {
+				year: '$_id.year',
+				month: '$_id.month',
+				day: '$_id.day',
+				pv: '$pv',
+				// uv: {$size: '$uv'} // 暂时先注释
+			}
+		}], function(err, data) {
+			_.forEach(categories, function(category) {
+				var month = Number(category.split('-')[0]);
+				var day = Number(category.split('-')[1]);
+				var count = _.result(_.find(data, {'month': month, 'day': day}), 'pv') || 0;
+				pvSeriesData.data.push(count);
+				uvSeriesData.data.push(calcUV(count));
+				sum.pv += count;
+				sum.uv += calcUV(count);
+			});
+
+			var seriesData = [pvSeriesData, uvSeriesData];
+
+			logger.info('call_interface', {
+				time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
+				interface_url: req.hostname + req.originalUrl
+			});
+
+			res.success({categories: categories, seriesData: seriesData, sum: sum});
+		});
+	}
+};
+
+exports.listRef = function(req, res) {
+	var startTime = new Date();
+	var query = req.query,
+		siteID = query.siteID,
+		st = util.getStartTime(query.st),
+		et = util.getEndTime(query.et) || st,
+		diffDays = util.diffDays(st, et, true);
+	visitDao.aggregate([{
+		$match: {
+			siteID: siteID,
+			visitTS: {
+				$gt: st,
+				$lt: et
+			}
+		}
+	}, {
+		$project : {
+			weight: {
+				$ifNull: ["$weight", 1]
+			},
+			ref: '$ref',
+			visitTS: {
+				$add: ["$visitTS", 8*60*60*1000] // 消除时区问题
+			}
+		}
+	}, {
+		$group: {
+			_id: {
+				ref: '$ref'
+			},
+			count: {$sum: '$weight'}
+		}
+	}], function(err, data) {
+		var refs = [],
+			seriesData = [],
+			sum = 0;
+		_.forEach(data, function(ref) {
+			refs.push(ref._id.ref);
+			sum += ref.count;
+			seriesData.push([ref._id.ref, ref.count]);
+		});
+		logger.info('call_interface', {
+			time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
+			interface_url: req.hostname + req.originalUrl
+		});
+
+		res.success({refs: refs, seriesData: seriesData, sum: sum});
+	});
+	// 	visitDao.aggregate([{
+	// 		$match: {
+	// 			siteID,
+	// 			visitTS: {
+	// 				$gt: st,
+	// 				$lt: et
+	// 			}
+	// 		}
+	// 	}, {
+	// 		$project : {
+	// 			weight: $ifNull: [ "$weight", 1]
+	// 			ref: '$ref'
+	// 			visitTS: $add: ['$visitTS', 8*60*60*1000] #消除时区问题
+	// 		}
+	// 	}, {
+	// 		$group: {
+	// 			_id: {
+	// 				ref: '$ref'
+	// 			}
+	// 			count: {$sum: '$weight'}
+	// 		}
+	// 	}], (err, data)->
+	// 		refs = []
+	// 		seriesData = []
+	// 		sum = 0
+	// 		for i in data
+	// 			refs.push(i._id.ref)
+	// 			sum += i.count
+	// 			seriesData.push([i._id.ref, i.count])
+
+	// 		logger.info('call_interface', {
+	// 			time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
+	// 			interface_url: req.host + req.originalUrl
+	// 		})
+	// 		res.success({refs, seriesData, sum})
+	// 	)
+
+};
 // listRef: (req, res)->
 // 	startTime = new Date();
 
@@ -183,44 +251,88 @@ var path 		= require('path'),
 // 	diffDay = utils.diffDay(st, et, true)
 // 	# 跨度小于一天的，按小时输出
 // 	# 跨度大于一天的，按天输出
-// 	visitDao.aggregate([{
-// 		$match: {
-// 			siteID,
-// 			visitTS: {
-// 				$gt: st,
-// 				$lt: et
-// 			}
-// 		}
-// 	}, {
-// 		$project : {
-// 			weight: $ifNull: [ "$weight", 1]
-// 			ref: '$ref'
-// 			visitTS: $add: ['$visitTS', 8*60*60*1000] #消除时区问题
-// 		}
-// 	}, {
-// 		$group: {
-// 			_id: {
-// 				ref: '$ref'
-// 			}
-// 			count: {$sum: '$weight'}
-// 		}
-// 	}], (err, data)->
-// 		refs = []
-// 		seriesData = []
-// 		sum = 0
-// 		for i in data
-// 			refs.push(i._id.ref)
-// 			sum += i.count
-// 			seriesData.push([i._id.ref, i.count])
-
-// 		logger.info('call_interface', {
-// 			time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
-// 			interface_url: req.host + req.originalUrl
-// 		})
-// 		res.success({refs, seriesData, sum})
-// 	)
 
 
+
+function getCategories(st, et, diffDays) {
+	if (diffDays) {
+		return util.amongDays(st, et, 'M-D');
+	} else {
+		var _i, _results;
+		return (function() {
+		  	_results = [];
+		  	for (_i = 0; _i <= 23; _i++){ _results.push(_i); }
+		  	return _results;
+		}).apply(this);
+	}
+}
+
+
+
+
+
+var uvList = [{
+	num: 30,
+	weight: 0.95
+}, {
+	num: 100,
+	weight: 0.90
+}, {
+	num: 200,
+	weight: 0.85
+}, {
+	num: 500,
+	weight: 0.80
+}, {
+	num: 1000,
+	weight: 0.75
+}, {
+	num: 1500,
+	weight: 0.80
+}, {
+	num: 2000,
+	weight: 0.85
+}, {
+	num: 4000,
+	weight: 0.90
+}, {
+	num: 7000,
+	weight: 0.95
+}, {
+	num: 10000,
+	weight: 0.90
+}, {
+	num: 13000,
+	weight: 0.85
+}, {
+	num: 17000,
+	weight: 0.80
+}, {
+	num: 20000,
+	weight: 0.75
+}, {
+	num: 25000,
+	weight: 0.80
+}, {
+	num: 30000,
+	weight: 0.85
+}, {
+	num: 50000,
+	weight: 0.90
+}, {
+	num: 100000,
+	weight: 0.80
+}];
+
+function calcUV(uv) {
+	var sum = 0;
+	for (var obj in uvList) {
+		if(uv < obj.num) {
+			return Math.ceil(obj.weight * uv);
+		}
+	}
+	return Math.ceil(0.75 * uv);
+}
 
 
 

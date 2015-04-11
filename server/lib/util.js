@@ -4,7 +4,7 @@ var path    = require('path'),
 	moment  = require('moment'),
 	url 	= require('url');
 
-
+require(path.join(__dirname, 'moment-recur'));
 
 // 注册上下文
 exports.setContext = function(serverPath) {
@@ -81,19 +81,55 @@ exports.dateTimeFormat = function(date) {
 	return getUTC(date).format("YYYY-MM-DD HH:mm");
 };
 
+// 时间戳
 exports.tsFormat = function(date) {
 	return Number(moment(date).format("x"));
 };
 
+// 年月日时分秒
 exports.lineTimeFormat = function(date) {
 	return getUTC(date).format("YYYYMMDDHHmmss");
 };
 
+// 相差的分钟数
 exports.diffMinutes = function(date1, date2) {
 	date1 = moment(date1);
 	date2 = date2 || moment();
 	return Math.floor(Math.abs(date1.diff(date2, 'minutse')) / 60000);
+};
 
+// 相差的天数
+exports.diffDays = function(date1, date2, isTs) {
+	if (isTs) {
+		date1 = this.getStartTime(date1);
+		date2 = this.getEndTime(date2);
+	}
+	date1 = moment(Number(date1));
+	date2 = moment(Number(date2));
+	return Math.abs(date2.diff(date1, 'days'));
+};
+
+// 间隔的日期
+exports.amongDays = function(date1, date2, format) {
+	if(Number(date1) > Number(date2)) {
+		var tmp = date1;
+		date1 = date2;
+		date2 = tmp;
+	}
+	format = format || 'MM-DD';
+	return moment().recur(Number(date1), Number(date2)).every(1).days().all(format);
+};
+
+// 获取一天开始的时间
+exports.getStartTime = function(date) {
+	date = Number(date) || (new Date()).getTime();
+	return moment(date).startOf('day').clone().toDate();
+};
+
+// 获取一天结束的时间
+exports.getEndTime = function(date) {
+	date = Number(date) || (new Date()).getTime();
+	return moment(date).endOf('day').clone().toDate();
 };
 
 function getUTC(date) {

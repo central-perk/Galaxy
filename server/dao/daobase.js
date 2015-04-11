@@ -50,6 +50,11 @@ DaoBase = (function() {
 				});
 			},
 
+			aggregate: function(query, callback) {
+				Model.aggregate(query, function(err, doc) {
+					return errHandler(err, doc, callback);
+				});
+			},
 			// 以下均未复写
 			createBySave: function(doc, callback) {
 				var model;
@@ -124,12 +129,7 @@ DaoBase = (function() {
 					.skip(options.perPage * options.page)
 					.exec(callback);
 			},
-			aggregate: function(query, callback) {
-				Model.aggregate(query, function(error) {
-					if (error) return callback(error);
-					return callback(null);
-				});
-			}
+
 		};
 	}
 	return {
