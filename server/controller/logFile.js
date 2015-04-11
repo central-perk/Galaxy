@@ -13,7 +13,7 @@ var path 		= require('path'),
 	LOGFILE_CACHE_EXPIRE = config.CACHE.expire.writeableLogFile,
 	logPath 	= dirPath.log;
 
-
+// 写入日志文件
 exports.write = function(log, callback) {
 	async.waterfall([
 		// 获得可写入日志文件的路径
@@ -144,6 +144,25 @@ exports.getStoreLogFile = function(callback) {
 		}
 	}, callback);
 };
+
+exports.clean = function() {
+	logFileDao.find({
+		status: LOGFILE_STATUS.storaged
+	}, function(err, logFiles) {
+		_.forEach(logFiles, function(logFile) {
+			var logFileName = logFile.name,
+				logFilePath = path.join(logPath, logFile.name);
+			logFileDao.remove({name: logFileName}, function(err) {
+				if(!err) {
+					console.log(logFileName, 'removed');
+					fs.removeSync(logFilePath);
+				}
+			});
+		});
+	});
+};
+
+
 
 // module.exports =
 // 	count: (query, callback)->

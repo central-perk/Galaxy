@@ -33,6 +33,8 @@ require(filePath.db).connect(function(mongoose) {
 	// 处理入库任务队列
 	kueCtrl.processStorage();
 
+	// 开启定时任务
+	require(filePath.cron);
 
 	app.listen(app.get('port'), function() {
 		console.log('Listen on port ' + app.get('port'));
