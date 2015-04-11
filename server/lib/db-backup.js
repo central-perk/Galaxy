@@ -12,7 +12,7 @@ var path = require('path'),
         dateFormate: 'YYYY.MM.DD',
         dbBackupPath: '/tmp/backup',
         prefix: '',
-        days: 7,
+        days: 5,
         tarExt: '.tar.gz',
         tar: true
     },
