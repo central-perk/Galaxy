@@ -76,11 +76,11 @@ Logger.prototype.report = function(level, logname, record) {
             console.log("[Request Error] %s", err);
             return;
         }
-        if (res && res.body) {
-            console.log('[Succeed Report Log] %s', res.body.msg);
-        } else {
-            console.log("[日志回调错误] %s", res);
-        }
+        // if (res && res.body) {
+        //     console.log('[Succeed Report Log] %s', res.body.msg);
+        // } else {
+        //     console.log("[日志回调错误] %s", res);
+        // }
     });
     //结束请求
     req.end();
