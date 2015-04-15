@@ -30,14 +30,14 @@ var jobDBBackup = new cronJob(config.TIME.midnight, function() {
 	// 确保数据库备份文件夹存在
 	fs.ensureDirSync(dbBackupPath);
 
-	dbBackup.init({
+	//dbBackup.init({
 		// 备份数据存储父级目录
-		path: dbBackupPath,
+	//	path: dbBackupPath,
 		// 数据库连接
-		host: CONFIG_DB.host + ':' + CONFIG_DB.port,
+	//	host: CONFIG_DB.host + ':' + CONFIG_DB.port,
 		// 数据库名称
-		name: CONFIG_DB.name
-	});
+	//	name: CONFIG_DB.name
+	//});
 }, null, true, 'Asia/Shanghai');
 
 
