@@ -1,11 +1,12 @@
-var path 	= require('path'),
-	fs 		= require('fs-extra'),
-	cronJob = require('cron').CronJob,
+var path = require('path'),
+	fs = require('fs-extra'),
+	cronJob = require('cron')
+	.CronJob,
 	request = require('request'),
-	async 	= require('async'),
-	moment 	= require('moment'),
-	config  = context.config,
-	util    = context.util,
+	async = require('async'),
+	moment = require('moment'),
+	config = context.config,
+	util = context.util,
 	filePath = context.filePath,
 	dirPath = context.dirPath,
 	CONFIG_DB = config.APP.db,
@@ -16,7 +17,8 @@ var path 	= require('path'),
 
 
 // 开启服务后10s执行
-var d = moment().add(5, 'seconds'),
+var d = moment()
+	.add(5, 'seconds'),
 	hour = d.hours(),
 	minute = d.minutes(),
 	second = d.seconds(),
@@ -24,8 +26,8 @@ var d = moment().add(5, 'seconds'),
 
 
 // 数据库定时备份
-var jobDBBackup = new cronJob(config.TIME.midnight, function() {
-	var dbBackupPath = path.join(dirPath.root, '..', 'analytics_backup', 'db');
+var jobDBBackup = new cronJob(config.TIME.midnight, function () {
+	var dbBackupPath = path.join(dirPath.root, '..', 'mnt', 'vdc', 'db_backup');
 
 	// 确保数据库备份文件夹存在
 	fs.ensureDirSync(dbBackupPath);
@@ -42,10 +44,9 @@ var jobDBBackup = new cronJob(config.TIME.midnight, function() {
 
 
 // 日志文件定时清空
-var jobCleanLogFile = new cronJob(config.TIME.sunday, function() {
+var jobCleanLogFile = new cronJob(config.TIME.sunday, function () {
 	logFileCtrl.clean();
 }, null, true, 'Asia/Shanghai');
-
 
 
 
@@ -73,14 +74,6 @@ var jobCleanLogFile = new cronJob(config.TIME.sunday, function() {
 
 
 
-
-
-
-
-
-
-
-
 // # 定时统计
 // # if config.ARCHIVE.cron
 // # 	archive = new CronJob(TIME[config.ARCHIVE.cron], ()->
@@ -89,7 +82,6 @@ var jobCleanLogFile = new cronJob(config.TIME.sunday, function() {
 
 // # 		console.log 'archive'
 // # 	null, true, 'Asia/Shanghai')
-
 
 
 
