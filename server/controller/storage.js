@@ -70,6 +70,7 @@ exports.store = function(logFile, callback) {
 				lineCur++;
 				if (line && lineCur > lineNum) {
 					// line 表示一条日志
+					// TODO 数据可能不完整，导致 JSON.parse 报错
 					line = JSON.parse(line);
 					if (line.level) delete line.level;
 					if (line.message) delete line.message;

@@ -85,7 +85,8 @@ module.exports = {
 		}
 	},
 	CVAR: {
-		channel: '1'
+		channel: '1',
+		pubTime: '2'
 	},
 	TIME: {
 		every10s: '*/10 * * * * *',
