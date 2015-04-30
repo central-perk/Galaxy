@@ -101,13 +101,21 @@ exports.listPV = function(req, res) {
 
 	if (req.query.flyerIDs) {
 		var flyerIDs = req.query.flyerIDs.split(','),
-			allCachedIDs = cache.keys(),
-			cachedIDs = _.intersection(flyerIDs, allCachedIDs),
+			_allCachedIDs = cache.keys();
+			allCachedIDs = [];
+
+		_.forEach(_allCachedIDs, function(flyerID) {
+			if (cache.get(flyerID)) {
+				allCachedIDs.push(flyerID);
+			}
+		});
+
+		var cachedIDs = _.intersection(flyerIDs, allCachedIDs),
 			uncachedIDs = _.difference(flyerIDs, allCachedIDs);
 
 		// 获取已经被缓存且需要返回的site
 		var cachedSites = _.reduce(cachedIDs, function(before, after) {
-			before.push(cache.get(after));
+			before.push(_.cloneDeep(cache.get(after))); // 引用对象可能被清空
 			return before;
 		}, []);
 
