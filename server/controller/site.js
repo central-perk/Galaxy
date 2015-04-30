@@ -115,7 +115,7 @@ exports.listPV = function(req, res) {
 
 		// 获取已经被缓存且需要返回的site
 		var cachedSites = _.reduce(cachedIDs, function(before, after) {
-			before.push(_.cloneDeep(cache.get(after))); // 引用对象可能被清空
+			before.push(cache.get(after)); // 引用对象可能被清空
 			return before;
 		}, []);
 
