@@ -29,7 +29,13 @@ exports.collect = function(req, res) {
 function getWeight(log) {
 	var cvar, firstPubTime, weight = 1;
 	if (log.cvar) {
-		cvar = JSON.parse(log.cvar);
+		try {
+			cvar = JSON.parse(log.cvar);
+		} catch(e) {
+			console.log('cvar', log.cvar);
+			return weight;
+		}
+
 		firstPubTime = cvar['2'] && cvar['2'][1];
 		if (firstPubTime && util.diffDays(new Date(), firstPubTime) > 0 && util.diffDays(new Date(), firstPubTime) < 14) {
 			weight = _.random(CONFIG_PV_WEIGHT[0], CONFIG_PV_WEIGHT[1]);
