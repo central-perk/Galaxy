@@ -15,15 +15,13 @@ var path 		= require('path'),
 
 
 
-
-
 exports.listTraffic = function(req, res) {
 	var startTime = new Date(); // 用于日志
 	var query = req.query,
 		siteID = query.siteID,
 		st = util.getStartTime(query.st),
 		et = util.getEndTime(query.et) || st,
-		diffDays = util.diffDays(st, et, true),
+		diffDays = util.diffDays(st, et, true);
 		categories = getCategories(st, et, diffDays);
 
 	var pvSeriesData = {
@@ -270,7 +268,6 @@ function getCategories(st, et, diffDays) {
 
 
 
-
 var uvList = [{
 	num: 30,
 	weight: 0.95
@@ -338,16 +335,18 @@ function calcUV(uv) {
 
 // 创建
 exports.create = function(logs, callback) {
-	var _log;
-	if (_.isArray(logs)) {
-		_log = [];
-		_.forEach(logs, function(log) {
+	var _log = [];
+	_.forEach(logs, function(log) {
+		if (!log.e_c) {
 			_log.push(assembleLog(log));
-		});
+		}
+	});
+
+	if (_log.length) {
+		visitDao.create(_log, callback);
 	} else {
-		_log = assembleLog(logs);
+		callback(null, null);
 	}
-	visitDao.create(_log, callback);
 };
 
 function assembleLog(log) {
@@ -397,6 +396,3 @@ function assembleLog(log) {
 	}
 	return data;
 }
-
-
-

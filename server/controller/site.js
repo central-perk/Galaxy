@@ -9,7 +9,6 @@ var async 		= require('async'),
 	siteDao 	= util.getDao('site');
 	siteModel 	= siteDao.siteModel;
 
-
 // 创建
 exports.create = function(req, res) {
 	var flyerID = req.body.flyerID,
@@ -97,8 +96,8 @@ exports.getOverview = function(req, res) {
 	});
 };
 
+// 根据 flyerIDs 获取作品 PV
 exports.listPV = function(req, res) {
-
 	if (req.query.flyerIDs) {
 		var flyerIDs = req.query.flyerIDs.split(','),
 			_allCachedIDs = cache.keys();
@@ -137,25 +136,46 @@ exports.listPV = function(req, res) {
 	}
 };
 
-
+// 实时数据更新
 exports.updateRT = function(log, callback) {
 	var siteID = log.idsite,
-		refType = util.getRef(log), // TODO 改进refType以支持来自邮件等等
-		doc = {
-			'$inc': {
-				pv: log.weight,
-				_pv: 1
-			}
-		};
+		EventCategory = log.e_c,
+		EventAction = log.e_a,
+		doc = {$inc: {}};
 
-	// 来源
+	if (EventCategory && EventAction) {
+		processWxShare(EventCategory, EventAction, doc);
+	} else {
+		processPV(log, doc);
+		processRef(log, doc);
+		uploadPV(siteID);
+	}
+	siteDao.update({_id: siteID}, doc, callback);
+};
+
+
+function processWxShare(EventCategory, EventAction, doc) {
+	if (EventCategory === 'flyer' && EventAction === 'wxShare') {
+		doc.$inc.wxShare = 1;
+	}
+}
+
+
+function processPV(log, doc) {
+	doc.$inc.pv = log.weight;
+	doc.$inc._pv = 1;
+}
+
+function processRef(log, doc) {
+	var refType = util.getRef(log);
 	doc.$inc['ref.' + refType] = log.weight;
 	doc.$inc['_ref.' + refType] = 1;
+}
 
-	// 上传传单PV
-	uploadPV(siteID);
 
-	siteDao.update({_id: siteID}, doc, callback);
+// 微信分享
+exports.wxShare = function() {
+
 };
 
 

@@ -117,7 +117,12 @@ exports.amongDays = function(date1, date2, format) {
 		date2 = tmp;
 	}
 	format = format || 'MM-DD';
-	return moment().recur(Number(date1), Number(date2)).every(1).days().all(format);
+	var diffDays = exports.diffDays(date1, date2);
+	var days = [];
+	for(var i = 0; i <= diffDays; i++) {
+		days.push(moment(date1).add(i, 'd').format(format));
+	}
+	return days;
 };
 
 // 获取一天开始的时间
@@ -162,8 +167,6 @@ exports.errHandler = function(err, doc, callback) {
 };
 
 
-
-
 exports.getRef = function(log) {
 	if (log.ua) {
 		var reg = log.ua.toLowerCase().match(/MicroMessenger/i);
@@ -178,4 +181,3 @@ exports.getRef = function(log) {
 	if (refUrl) host = url.parse(refUrl).host;
 	return host && CONFIG_REF[host] ? CONFIG_REF[host] : 'websites';
 };
-

@@ -3,11 +3,6 @@ var path        = require('path'),
 	gulp        = require('gulp'),
 	$$          = require('gulp-load-plugins')();
 
-
-/**
- * restart
- */
-
 // 监控服务端文件改动，并重启
 gulp.task('restart', function() {
 

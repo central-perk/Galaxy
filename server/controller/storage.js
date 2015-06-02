@@ -13,6 +13,7 @@ var path 		= require('path'),
 	logFileCtrl = util.getCtrl('logFile'),
 	visitCtrl 	= util.getCtrl('visit'),
 	originCtrl 	= util.getCtrl('origin'),
+	eventCtrl 	= util.getCtrl('event'),
 	LOGFILE_STATUS = config.LOGFILE.status,
 	STORAGE_MAXLINES = config.STORAGE.maxLines;
 
@@ -113,6 +114,10 @@ function json2db(logs, callback) {
 	async.auto({
 		storeVisit: function(cb) {
 			visitCtrl.create(logs, cb);
+		},
+		storeEvent: function(cb) {
+			console.log('storeEvent');
+			eventCtrl.create(logs, cb);
 		},
 		origin: function(cb) {
 			originCtrl.create(logs, cb);

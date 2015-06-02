@@ -52,7 +52,6 @@ exports.processLog = function() {
 	});
 };
 
-
 // 入库任务的处理
 exports.processStorage = function() {
 	jobs.process('storage', config.KUE.maxProcess, function(job, done) {
@@ -67,5 +66,3 @@ exports.processStorage = function() {
 		});
 	});
 };
-
-

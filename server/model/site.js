@@ -31,6 +31,7 @@ var schema = new Schema({
 		search: Number0,
 		email: Number0
 	},
+	wxShare: Number0,
 	_pv: Number0,
 	_ref: {
 		weibo: Number0,
