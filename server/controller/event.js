@@ -120,6 +120,21 @@ exports.list = function(req, res) {
 };
 
 
+
+function getCategories(st, et, diffDays) {
+	if (diffDays) {
+		return util.amongDays(st, et, 'M-D');
+	} else {
+		var _i, _results;
+		return (function() {
+		  	_results = [];
+		  	for (_i = 0; _i <= 23; _i++){ _results.push(_i); }
+		  	return _results;
+		}).apply(this);
+	}
+}
+
+
 // 创建
 exports.create = function(logs, callback) {
 	var _log = [];
