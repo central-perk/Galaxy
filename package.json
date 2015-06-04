@@ -34,8 +34,6 @@
     "gulp": "3.8.11",
     "gulp-load-plugins": "0.8.1",
     "gulp-nodemon": "1.0.5",
-    "gulp-util": "3.0.4",
-    "gulp-concat": "*",
-    "gulp-clean": "*"
+    "gulp-util": "3.0.4"
   }
 }

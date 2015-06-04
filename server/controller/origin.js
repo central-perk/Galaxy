@@ -20,6 +20,7 @@ exports.create = function(logs, callback) {
 	originDao.create(_log, callback);
 };
 
+// 日志组装
 function assembleLog(log) {
 	var data = {
 		siteID: log.idsite,

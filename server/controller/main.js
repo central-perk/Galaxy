@@ -7,7 +7,6 @@ var _ 			= require('lodash'),
 	CONFIG_PV_WEIGHT = config.PV.weight;
 
 
-
 // 收集数据
 exports.collect = function(req, res) {
 	var log = req.query;
@@ -26,6 +25,7 @@ exports.collect = function(req, res) {
 	res.end(null);
 };
 
+// 设置当前请求的权重
 function getWeight(log) {
 	var cvar, firstPubTime, weight = 1;
 	if (log.cvar) {

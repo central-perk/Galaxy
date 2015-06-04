@@ -153,19 +153,20 @@ exports.updateRT = function(log, callback) {
 	siteDao.update({_id: siteID}, doc, callback);
 };
 
-
+// 处理微信分享
 function processWxShare(EventCategory, EventAction, doc) {
 	if (EventCategory === 'flyer' && EventAction === 'wxShare') {
 		doc.$inc.wxShare = 1;
 	}
 }
 
-
+// 处理 PV
 function processPV(log, doc) {
 	doc.$inc.pv = log.weight;
 	doc.$inc._pv = 1;
 }
 
+// 处理 ref
 function processRef(log, doc) {
 	var refType = util.getRef(log);
 	doc.$inc['ref.' + refType] = log.weight;
@@ -173,13 +174,7 @@ function processRef(log, doc) {
 }
 
 
-// 微信分享
-exports.wxShare = function() {
-
-};
-
-
-
+// 上传 pv 至 echuandan 服务器
 function uploadPV(siteID) {
 	siteDao.findByID(siteID, function(err, site) {
 		if (err) return;
@@ -204,9 +199,3 @@ function uploadPV(siteID) {
 		}
 	});
 }
-
-
-
-
-
-

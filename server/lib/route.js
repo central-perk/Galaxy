@@ -7,9 +7,6 @@ var path 	= require('path'),
 	dirPath = context.dirPath,
 	filePath = context.filePath;
 
-
-
-
 // 路由根目录
 var routeDirPath = dirPath.route;
 
@@ -37,6 +34,4 @@ module.exports = function(app) {
 			require(routeFilePath)(app, router, mw, ctrl);
 		}
 	});
-
-
 };

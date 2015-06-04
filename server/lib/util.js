@@ -4,7 +4,6 @@ var path    = require('path'),
 	moment  = require('moment'),
 	url 	= require('url');
 
-require(path.join(__dirname, 'moment-recur'));
 
 // 注册上下文
 exports.setContext = function(serverPath) {

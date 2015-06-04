@@ -7,6 +7,7 @@ var config  = context.config,
 
 module.exports = {
     requiresLogin: function(req, res, next) {
+
     }
 };
 

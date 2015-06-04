@@ -9,9 +9,9 @@ var schema = new Schema({
 		type: String,
 		ref: 'site'
 	},
-	category: String,
-	action: String,
-	data: {},
+	category: String, // 事件类型
+	action: String, // 事件动作
+	data: {}, // 事件数据
 	visitorID: String,
 	ref: String,
 	visitTS: {

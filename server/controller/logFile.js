@@ -145,6 +145,7 @@ exports.getStoreLogFile = function(callback) {
 	}, callback);
 };
 
+// 清理日志文件，定时调用
 exports.clean = function() {
 	logFileDao.find({
 		status: LOGFILE_STATUS.storaged
@@ -161,17 +162,3 @@ exports.clean = function() {
 		});
 	});
 };
-
-
-
-// module.exports =
-// 	count: (query, callback)->
-// 		logFileDao.count(query, callback)
-// 	readyStorage: (callback)->
-// 		# 将日志文件状态从可写入转为待入库状态
-// 		logFileDao.Model.update(
-// 			{status: LOGFILE_STATUS.writeable},
-// 			{status: LOGFILE_STATUS.unstorage},
-// 			{multi: true},
-// 			callback
-// 		)

@@ -14,7 +14,7 @@ var path 		= require('path'),
 	BROWSER_TYPE = config.UA.browser;
 
 
-
+// 流量折线图
 exports.listTraffic = function(req, res) {
 	var startTime = new Date(); // 用于日志
 	var query = req.query,
@@ -153,6 +153,7 @@ exports.listTraffic = function(req, res) {
 	}
 };
 
+// 来源折线图
 exports.listRef = function(req, res) {
 	var startTime = new Date();
 	var query = req.query,
@@ -201,57 +202,9 @@ exports.listRef = function(req, res) {
 
 		res.success({refs: refs, seriesData: seriesData, sum: sum});
 	});
-	// 	visitDao.aggregate([{
-	// 		$match: {
-	// 			siteID,
-	// 			visitTS: {
-	// 				$gt: st,
-	// 				$lt: et
-	// 			}
-	// 		}
-	// 	}, {
-	// 		$project : {
-	// 			weight: $ifNull: [ "$weight", 1]
-	// 			ref: '$ref'
-	// 			visitTS: $add: ['$visitTS', 8*60*60*1000] #消除时区问题
-	// 		}
-	// 	}, {
-	// 		$group: {
-	// 			_id: {
-	// 				ref: '$ref'
-	// 			}
-	// 			count: {$sum: '$weight'}
-	// 		}
-	// 	}], (err, data)->
-	// 		refs = []
-	// 		seriesData = []
-	// 		sum = 0
-	// 		for i in data
-	// 			refs.push(i._id.ref)
-	// 			sum += i.count
-	// 			seriesData.push([i._id.ref, i.count])
-
-	// 		logger.info('call_interface', {
-	// 			time_spend: (new Date().getTime() - startTime.getTime()) / 1000,
-	// 			interface_url: req.host + req.originalUrl
-	// 		})
-	// 		res.success({refs, seriesData, sum})
-	// 	)
-
 };
-// listRef: (req, res)->
-// 	startTime = new Date();
 
-// 	query = req.query
-// 	siteID = query.siteID
-// 	st = utils.getStartTS(query.st)
-// 	et = utils.getEndTS(query.et) or st
-// 	diffDay = utils.diffDay(st, et, true)
-// 	# 跨度小于一天的，按小时输出
-// 	# 跨度大于一天的，按天输出
-
-
-
+// 按单天查询则返回小时的数组，按多天查询则返回日期的数组
 function getCategories(st, et, diffDays) {
 	if (diffDays) {
 		return util.amongDays(st, et, 'M-D');
@@ -349,6 +302,7 @@ exports.create = function(logs, callback) {
 	}
 };
 
+// 日志组装
 function assembleLog(log) {
 	var refType = util.getRef(log);
 	var deviceType, osType, browserType, province, city;

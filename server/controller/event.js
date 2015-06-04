@@ -15,6 +15,7 @@ var path 		= require('path'),
 
 
 
+// 微信分享折线图
 exports.list = function(req, res) {
 	var query = req.query,
 		siteID = query.siteID,
@@ -119,8 +120,7 @@ exports.list = function(req, res) {
 	}
 };
 
-
-
+// 按单天查询则返回小时的数组，按多天查询则返回日期的数组
 function getCategories(st, et, diffDays) {
 	if (diffDays) {
 		return util.amongDays(st, et, 'M-D');
@@ -150,10 +150,12 @@ exports.create = function(logs, callback) {
 	}
 };
 
+// 日志组装
 function assembleLog(log) {
 	var refType = util.getRef(log);
 	var deviceType, osType, browserType, province, city;
 
+	// 通过 UA 得到设备信息
 	if (log.ua) {
 		var ua = new useragent(log.ua);
 		if (ua) {
@@ -168,6 +170,7 @@ function assembleLog(log) {
 			}
 		}
 	}
+	// 通过 IP 得到地理信息
 	if (log.ip) {
 		var location = lbs.getAddress(log.ip);
 		if (location && location[0]) {

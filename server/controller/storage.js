@@ -17,7 +17,7 @@ var path 		= require('path'),
 	LOGFILE_STATUS = config.LOGFILE.status,
 	STORAGE_MAXLINES = config.STORAGE.maxLines;
 
-
+// 日志文件入库
 exports.store = function(logFile, callback) {
 	var logFileName = logFile.name,
 		logFilePath = logFile.path || path.join(logPath, logFileName),
@@ -110,6 +110,7 @@ exports.store = function(logFile, callback) {
 	});
 };
 
+// json 文件入库
 function json2db(logs, callback) {
 	async.auto({
 		storeVisit: function(cb) {
