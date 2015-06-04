@@ -45,13 +45,11 @@ exports.setContext = function(serverPath) {
 
 	context.pkgJSON = require(path.join(rootPath, 'package.json'));
 
-	// 注册model
 	this.registerModels();
-
-	// 注册dao
 	this.registerDaos();
 };
 
+// 注册 model
 exports.registerModels = function() {
 	_.forEach(fs.readdirSync(context.dirPath.model), function(fileName) {
 		if (/\.js$/.test(fileName)) {
@@ -62,6 +60,7 @@ exports.registerModels = function() {
 	});
 };
 
+// 注册 dao
 exports.registerDaos = function() {
 	require(context.dirPath.dao);
 };
@@ -140,6 +139,7 @@ function getUTC(date) {
 	return moment(date).utcOffset(8);
 }
 
+// 随机字符串
 exports.randomStr = function(length) {
 	var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split(''),
   		str = '';
@@ -150,22 +150,23 @@ exports.randomStr = function(length) {
 	return str;
 };
 
-
+// 正式环境
 exports.isPro = function() {
 	return context.env === 'pro';
 };
 
+// 开发环境
 exports.isDev = function() {
 	return context.env === 'dev';
 };
 
-
+// 错误处理
 exports.errHandler = function(err, doc, callback) {
 	if (err) console.log(err);
 	callback(err, doc);
 };
 
-
+// 来源分析
 exports.getRef = function(log) {
 	if (log.ua) {
 		var reg = log.ua.toLowerCase().match(/MicroMessenger/i);

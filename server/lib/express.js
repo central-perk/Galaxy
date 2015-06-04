@@ -70,8 +70,6 @@ module.exports = function(app, passport, mongoose) {
 	app.use(methodOverride());
 
 
-
-
 	// Node.js middleware for handling `multipart/form-data`.
 	app.use(multer());
 };
