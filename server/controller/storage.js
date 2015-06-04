@@ -117,7 +117,6 @@ function json2db(logs, callback) {
 			visitCtrl.create(logs, cb);
 		},
 		storeEvent: function(cb) {
-			console.log('storeEvent');
 			eventCtrl.create(logs, cb);
 		},
 		origin: function(cb) {

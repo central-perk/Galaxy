@@ -31,7 +31,7 @@ var schema = new Schema({
 		search: Number0,
 		email: Number0
 	},
-	wxShare: Number0,
+	wxShare: Number0, // 微信分享次数
 	_pv: Number0, // 真实 pv
 	_ref: { // 真实 来源
 		weibo: Number0,

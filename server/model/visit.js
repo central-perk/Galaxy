@@ -3,6 +3,12 @@ var mongoose = require('mongoose'),
 	config  = context.config,
 	util    = context.util;
 
+// 索引
+// http://docs.mongodb.org/manual/core/index-compound/
+// {
+// 	"siteID" : 1,
+// 	"visitTS" : 1
+// }
 
 var schema = new Schema({
 	siteID: {

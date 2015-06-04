@@ -24,10 +24,11 @@ exports.write = function(log, callback) {
 		function(logFilePath, cb) {
 			var logFileName = path.basename(logFilePath);
 			log.fileName = logFileName;
+			// http://www.jb51.net/article/29893.htm
 			log = JSON.stringify(log, null, 0) + '\n';
 			fs.writeFile(logFilePath, log, {
 				encoding: 'utf8',
-				flag:'a'
+				flag: 'a'
 			}, cb);
 		}
 	], callback);
