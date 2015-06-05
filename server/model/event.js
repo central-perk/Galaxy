@@ -5,13 +5,13 @@ var mongoose = require('mongoose'),
 
 
 var schema = new Schema({
-	siteID: {
+	siteID: {    //aID
 		type: String,
 		ref: 'site'
 	},
 	category: String, // 事件类型 ['flyer']
 	action: String, // 事件动作 flyer.wxShare
-	data: {}, // 事件数据 e_n
+	data: {}, // 事件数据 e_n,这个  _paq.push(['trackEvent', 'flyer', 'wxShare',JSON.stringify(data)]);
 	visitorID: String,
 	ref: String,
 	visitTS: {
@@ -22,7 +22,7 @@ var schema = new Schema({
 	deviceType: Number,
 	os: Number,
 	browser: Number,
-	sr: String,
+	sr: String, //分辨率 resolution
 	IP: String,
 	country: String,
 	province: String,

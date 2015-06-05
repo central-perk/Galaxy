@@ -32,10 +32,10 @@ module.exports = {
 			flyerID: 300000, // 5min
 		}
 	},
-	PV: {
+	PV: {//getWeight分配权值
 		weight: [9, 15]
 	},
-	REF: {
+	REF: { //site下的ref内key对应下面数据
 		// 来自微博
 		'weibo.com':                'weibo',
 		// 直接访问
@@ -84,6 +84,8 @@ module.exports = {
 			other: 100
 		}
 	},
+	// setCustomVariable key etc:
+	// _paq.push(['setCustomVariable', 2, 'firstPubTime', ECD.flyer.firstPubTime, 'page']);
 	CVAR: {
 		channel: '1',
 		pubTime: '2'

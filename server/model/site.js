@@ -8,7 +8,9 @@ var Number0 = {
 	default: 0
 };
 
-
+/**
+ * [site ]
+ */
 var schema = new Schema({
 	_id: {
 		type: String,
@@ -20,9 +22,9 @@ var schema = new Schema({
 		unique: true,
 		sparse: true
 	},
-	pv: Number0,
-	// 来源
-	ref: {
+	pv: Number0,//报表 实时更新
+	// 来源   实时更新
+	ref: { //报表
 		weibo: Number0,
 		weixin: Number0,
 		websites: Number0,
@@ -32,8 +34,8 @@ var schema = new Schema({
 		email: Number0
 	},
 	wxShare: Number0, // 微信分享次数
-	_pv: Number0, // 真实 pv
-	_ref: { // 真实 来源
+	_pv: Number0, // 真实 pv  实时更新
+	_ref: { // 真实 来源       实时更新
 		weibo: Number0,
 		weixin: Number0,
 		websites: Number0,
