@@ -1,8 +1,3 @@
-// var config = process.common.config
-// var env = process.env.NODE_ENV || 'development';
-// var QN = require('./qiniu.js');
-// var backup = new QN(config.BACKUP.bucket);
-
 var path = require('path'),
 	fs = require('fs-extra'),
 	exec = require('child_process')
@@ -19,7 +14,11 @@ var path = require('path'),
 	},
 	Backup = {},
 	_ = require('lodash');
-
+/**
+ * [init 数据库备份服务]
+ * @param  {[type]} options [description]
+ * @return {[type]}         [description]
+ */
 Backup.init = function (options) {
 	var dbBackupPath = options.path || config.dbBackupPath, //数据库备份父级目录
 		dbHost = options.host, //数据连接

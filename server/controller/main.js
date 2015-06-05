@@ -12,6 +12,7 @@ exports.collect = function(req, res) {
 	var log = req.query;
 
 	log.ua = req.headers['user-agent'];
+
 	log.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
 	// 添加 pv 权重

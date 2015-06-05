@@ -3,9 +3,9 @@ var mongoose = require('mongoose'),
 	config  = context.config,
 	util    = context.util;
 
-
+//logFile 的一行记录，未分析过的
 var schema = new Schema({
-	siteID: {
+	siteID: { //aID
 		type: String,
 		ref: 'site'
 	},
@@ -14,7 +14,7 @@ var schema = new Schema({
 	visitorID: String,
 	ua: String,
 	IP: String,
-	sr: String,
+	sr: String, //分辨率 resolution
 	ref: String,
 	visitTS: {
 		type: Date,

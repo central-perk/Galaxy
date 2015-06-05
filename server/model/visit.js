@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
 // }
 
 var schema = new Schema({
-	siteID: {
+	siteID: {  //aID
 		type: String,
 		ref: 'site'
 	},
