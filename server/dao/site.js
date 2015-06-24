@@ -16,7 +16,7 @@ exports.getRefByID = function(siteID, callback) {
 };
 
 exports.getOverviewByID = function(siteID, callback) {
-	Model.findOne({_id: siteID}, '_id pv ref', function(err, doc) {
+	Model.findOne({_id: siteID}, '_id pv ref wxShare', function(err, doc) {
 		return util.errHandler(err, doc, callback);
 	});
 };
