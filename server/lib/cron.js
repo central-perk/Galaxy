@@ -23,27 +23,27 @@ var d = moment().add(5, 'seconds'),
 	after5s = second + ' ' + minute + ' ' + hour + ' * * *';
 
 
-// 数据库定时备份
-var jobDBBackup = new cronJob(config.TIME.midnight, function () {
-	var dbBackupPath;
-	if (util.isPro()) {
-		dbBackupPath = path.join(dirPath.root, '..', 'mnt', 'vdc', 'db_backup');
-	} else {
-		dbBackupPath = path.join(dirPath.root, '..', 'analytics_backup', 'db');
-	}
+// // 数据库定时备份
+// var jobDBBackup = new cronJob(config.TIME.midnight, function () {
+// 	var dbBackupPath;
+// 	if (util.isPro()) {
+// 		dbBackupPath = path.join(dirPath.root, '..', 'mnt', 'vdc', 'db_backup');
+// 	} else {
+// 		dbBackupPath = path.join(dirPath.root, '..', 'analytics_backup', 'db');
+// 	}
 
-	// 确保数据库备份文件夹存在
-	fs.ensureDirSync(dbBackupPath);
+// 	// 确保数据库备份文件夹存在
+// 	fs.ensureDirSync(dbBackupPath);
 
-	dbBackup.init({
-		// 备份数据存储父级目录
-		path: dbBackupPath,
-		// 数据库连接
-		host: CONFIG_DB.host + ':' + CONFIG_DB.port,
-		// 数据库名称
-		name: CONFIG_DB.name
-	});
-}, null, true, 'Asia/Shanghai');
+// 	dbBackup.init({
+// 		// 备份数据存储父级目录
+// 		path: dbBackupPath,
+// 		// 数据库连接
+// 		host: CONFIG_DB.host + ':' + CONFIG_DB.port,
+// 		// 数据库名称
+// 		name: CONFIG_DB.name
+// 	});
+// }, null, true, 'Asia/Shanghai');
 
 
 // 日志文件定时清空
