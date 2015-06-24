@@ -1,6 +1,6 @@
 {
 	"apps": [{
-		"name": "weixin",
+		"name": "analytics",
 		"script": "server/server.js",
 		"env": {
 			"NODE_ENV": "pro"
