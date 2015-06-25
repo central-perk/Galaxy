@@ -1,9 +1,9 @@
-var _ 			= require('lodash'),
-	config      = context.config,
-	util        = context.util,
-	dirPath     = context.dirPath,
-	filePath    = context.filePath,
-	kue 		= util.getCtrl('kue'),
+var _ = require('lodash'),
+	config = context.config,
+	util = context.util,
+	dirPath = context.dirPath,
+	filePath = context.filePath,
+	kue = util.getCtrl('kue'),
 	CONFIG_PV_WEIGHT = config.PV.weight;
 
 
@@ -16,13 +16,15 @@ exports.collect = function(req, res) {
 	log.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
 	// 添加 pv 权重
-	log.weight = getWeight(log);
+	log.weight = 1;
 
 	// 加入日志任务队列
 	kue.enqueueLog(log);
 
 	// 收集统计结果，直接返回图片类型
-	res.writeHead(200, {'Content-Type': 'image/webp' });
+	res.writeHead(200, {
+		'Content-Type': 'image/webp'
+	});
 	res.end(null);
 };
 
@@ -32,7 +34,7 @@ function getWeight(log) {
 	if (log.cvar) {
 		try {
 			cvar = JSON.parse(log.cvar);
-		} catch(e) {
+		} catch (e) {
 			console.log('cvar', log.cvar);
 			return weight;
 		}
@@ -44,5 +46,3 @@ function getWeight(log) {
 	}
 	return weight;
 }
-
-

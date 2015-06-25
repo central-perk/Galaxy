@@ -33,7 +33,7 @@ module.exports = {
 		}
 	},
 	PV: {//getWeight分配权值
-		weight: [9, 15]
+		weight: [1, 1]
 	},
 	REF: { //site下的ref内key对应下面数据
 		// 来自微博
