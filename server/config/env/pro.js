@@ -2,7 +2,7 @@ module.exports = {
 	APP: {
 		db: {
 	        name: 'echuandan_analytics', //数据库绝对名称
-	        host: '127.0.0.1',
+	        host: '10.10.104.41',
 			port: 27017
 		}
 
