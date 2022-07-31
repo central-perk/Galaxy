@@ -1,42 +1,42 @@
-// 环境变脸默认为dev
+// The environment change face defaults to dev
 process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
-var path    = require('path'),
-	fs 		= require('fs-extra'),
-	express = require('express');
+var path = require('path'),
+fs = require('fs-extra'),
+express = require('express');
 
-// 注入全局上下文
+// inject global context
 require(path.join(__dirname, 'lib', 'util')).setContext(__dirname);
 
-var config  = context.config,
-	util    = context.util,
-	dirPath = context.dirPath,
-	filePath = context.filePath,
-	kueCtrl = util.getCtrl('kue');
+var config = context.config,
+util = context.util,
+dirPath = context.dirPath,
+filePath = context.filePath,
+kueCtrl = util.getCtrl('kue');
 
-// 默认创建 log 文件夹，存在则不创建
+// The log folder is created by default, if it exists, it will not be created
 fs.ensureDirSync(dirPath.log);
 
 require(filePath.db).connect(function(mongoose) {
 
-	var app = express();
+var app = express();
 
-	// Express配置
-	require(filePath.express)(app, mongoose);
+// Express configuration
+require(filePath.express)(app, mongoose);
 
-	// Route配置
-	require(filePath.route)(app);
+// Route configuration
+require(filePath.route)(app);
 
-	// 处理日志任务队列
-	kueCtrl.processLog();
+// Process the log task queue
+kueCtrl.processLog();
 
-	// 处理入库任务队列
-	kueCtrl.processStorage();
+// Process the inbound task queue
+kueCtrl.processStorage();
 
-	// 开启定时任务
-	require(filePath.cron);
+// start the scheduled task
+require(filePath.cron);
 
-	app.listen(app.get('port'), function() {
-		console.log('Listen on port ' + app.get('port'));
-	});
+app.listen(app.get('port'), function() {
+console.log('Listen on port ' + app.get('port'));
+});
 });

@@ -1,6 +1,4 @@
-module.exports = function(app, router, mw, event) {
-
-	// 获取事件信息（微信分享折线图）
-	router.get('/event', event.list);
-
+module.exports = function (app, router, mw, event) {
+  // Get event information (WeChat sharing line chart)
+  router.get("/event", event.list);
 };

@@ -1,8 +1,7 @@
-module.exports = function(app, router, mw, visit) {
+module.exports = function (app, router, mw, visit) {
+  // Source view (source line chart)
+  router.get("/visit/ref", visit.listRef);
 
-	// 来源查看（来源折线图）
-	router.get('/visit/ref', visit.listRef);
-
-	// 流量查看（流量折线图）
-	router.get('/visit/traffic', visit.listTraffic);
+  // Traffic view (traffic line chart)
+  router.get("/visit/traffic", visit.listTraffic);
 };

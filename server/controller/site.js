@@ -1,201 +1,225 @@
-var async 		= require('async'),
-	request 	= require('request'),
-	cache 		= require('memory-cache'),
-	_ 			= require('lodash'),
-	config      = context.config,
-	util        = context.util,
-	dirPath     = context.dirPath,
-	filePath    = context.filePath,
-	siteDao 	= util.getDao('site');
-	siteModel 	= siteDao.siteModel;
+var async = require("async"),
+  request = require("request"),
+  cache = require("memory-cache"),
+  _ = require("lodash"),
+  config = context.config,
+  util = context.util,
+  dirPath = context.dirPath,
+  filePath = context.filePath,
+  siteDao = util.getDao("site");
+siteModel = siteDao.siteModel;
 
-// 创建
-exports.create = function(req, res) {
-	var flyerID = req.body.flyerID,
-		siteID = util.randomStr();
+// create
+exports.create = function (req, res) {
+  var flyerID = req.body.flyerID,
+    siteID = util.randomStr();
 
-	if (!flyerID) return res.error('缺少 flyerID');
-	async.auto({
-		// 检验 flyerID 唯一性
-		checkFlyerID: function(cb) {
-			siteDao.findOne({flyerID: flyerID}, cb);
-		},
-		// 检验 siteID 唯一性
-		checkSiteID: function(cb) {
-			siteDao.findOne({_id: siteID}, cb);
-		}
-	}, function(err, results) {
-		if (results.checkFlyerID) { // 传单已经被创建则返回传单信息
-			res.success(results.checkFlyerID);
-		} else if (results.checkSiteID) {
-			res.error('页面ID重复，创建失败');
-		} else {
-			siteDao.create({
-				_id: siteID,
-				flyerID: flyerID
-			}, function(err, raw) {
-				if (!err) {
-					res.success(raw);
-				} else {
-					res.error('服务错误，创建失败');
-				}
-			});
-		}
-	});
+  if (!flyerID) return res.error("missing flyerID");
+  async.auto(
+    {
+      // check flyerID uniqueness
+      checkFlyerID: function (cb) {
+        siteDao.findOne({ flyerID: flyerID }, cb);
+      },
+      // check siteID uniqueness
+      checkSiteID: function (cb) {
+        siteDao.findOne({ _id: siteID }, cb);
+      },
+    },
+    function (err, results) {
+      if (results.checkFlyerID) {
+        // Return the flyer information if the flyer has been created
+        res.success(results.checkFlyerID);
+      } else if (results.checkSiteID) {
+        res.error("The page ID is duplicated, the creation failed");
+      } else {
+        siteDao.create(
+          {
+            _id: siteID,
+            flyerID: flyerID,
+          },
+          function (err, raw) {
+            if (!err) {
+              res.success(raw);
+            } else {
+              res.error("Service error, creation failed");
+            }
+          }
+        );
+      }
+    }
+  );
 };
 
-// 获取单个
-exports.getByID = function(req, res) {
-	var siteID = req.params.siteID;
-	if (!siteID) return res.error('缺少 siteID');
-	siteDao.findByID(siteID, function(err, site) {
-		if (!err) {
-			res.success(site);
-		} else {
-			res.error('页面不存在或者发生错误');
-		}
-	});
+// get a single
+exports.getByID = function (req, res) {
+  var siteID = req.params.siteID;
+  if (!siteID) return res.error("missing siteID");
+  siteDao.findByID(siteID, function (err, site) {
+    if (!err) {
+      res.success(site);
+    } else {
+      res.error("The page does not exist or an error occurred");
+    }
+  });
 };
 
-// 获取 PV
-exports.getPV = function(req, res) {
-	var siteID = req.params.siteID;
-	if (!siteID) return res.error('缺少 siteID');
-	siteDao.getPVByID(siteID, function(err, site) {
-		if (!err) {
-			res.success(site.pv);
-		} else {
-			res.error('页面不存在或者发生错误');
-		}
-	});
+// get PV
+exports.getPV = function (req, res) {
+  var siteID = req.params.siteID;
+  if (!siteID) return res.error("missing siteID");
+  siteDao.getPVByID(siteID, function (err, site) {
+    if (!err) {
+      res.success(site.pv);
+    } else {
+      res.error("The page does not exist or an error occurred");
+    }
+  });
 };
 
-// 获取 ref
-exports.getRef = function(req, res) {
-	var siteID = req.params.siteID;
-	if (!siteID) return res.error('缺少 siteID');
-	siteDao.getRefByID(siteID, function(err, site) {
-		if (!err) {
-			res.success(site.ref);
-		} else {
-			res.error('页面不存在或者发生错误');
-		}
-	});
+// get ref
+exports.getRef = function (req, res) {
+  var siteID = req.params.siteID;
+  if (!siteID) return res.error("missing siteID");
+  siteDao.getRefByID(siteID, function (err, site) {
+    if (!err) {
+      res.success(site.ref);
+    } else {
+      res.error("The page does not exist or an error occurred");
+    }
+  });
 };
 
-// 获取 overview
-exports.getOverview = function(req, res) {
-	var siteID = req.params.siteID;
-	if (!siteID) return res.error('缺少 siteID');
-	siteDao.getOverviewByID(siteID, function(err, site) {
-		if (!err) {
-			res.success(site);
-		} else {
-			res.error('页面不存在或者发生错误');
-		}
-	});
+// get overview
+exports.getOverview = function (req, res) {
+  var siteID = req.params.siteID;
+  if (!siteID) return res.error("missing siteID");
+  siteDao.getOverviewByID(siteID, function (err, site) {
+    if (!err) {
+      res.success(site);
+    } else {
+      res.error("The page does not exist or an error occurred");
+    }
+  });
 };
 
-// 根据 flyerIDs 获取作品 PV
-exports.listPV = function(req, res) {
-	if (req.query.flyerIDs) {
-		var flyerIDs = req.query.flyerIDs.split(','),
-			_allCachedIDs = cache.keys();
-			allCachedIDs = [];
+// Get work PV based on flyerIDs
+exports.listPV = function (req, res) {
+  if (req.query.flyerIDs) {
+    var flyerIDs = req.query.flyerIDs.split(","),
+      _allCachedIDs = cache.keys();
+    allCachedIDs = [];
 
-		_.forEach(_allCachedIDs, function(flyerID) {
-			if (cache.get(flyerID)) {
-				allCachedIDs.push(flyerID);
-			}
-		});
+    _.forEach(_allCachedIDs, function (flyerID) {
+      if (cache.get(flyerID)) {
+        allCachedIDs.push(flyerID);
+      }
+    });
 
-		var cachedIDs = _.intersection(flyerIDs, allCachedIDs),
-			uncachedIDs = _.difference(flyerIDs, allCachedIDs);
+    var cachedIDs = _.intersection(flyerIDs, allCachedIDs),
+      uncachedIDs = _.difference(flyerIDs, allCachedIDs);
 
-		// 获取已经被缓存且需要返回的site
-		var cachedSites = _.reduce(cachedIDs, function(before, after) {
-			before.push(cache.get(after)); // 引用对象可能被清空
-			return before;
-		}, []);
+    // Get the site that has been cached and needs to be returned
+    var cachedSites = _.reduce(
+      cachedIDs,
+      function (before, after) {
+        before.push(cache.get(after)); // reference object may be cleared
+        return before;
+      },
+      []
+    );
 
-		siteDao.listPV({flyerID: {$in: uncachedIDs}}, function(err, uncachedSites) {
-			if (!err) {
-
-				// 将得到的数据缓存，并设置过期时间
-				_.forEach(uncachedSites, function(site) {
-					cache.put(site.flyerID, site, config.CACHE.expire.flyerID); // 5min
-				});
-				var allSites = _.merge(uncachedSites, cachedSites);
-				res.pSuccess(allSites);
-			} else {
-				res.pSuccess([]);
-			}
-		});
-	} else {
-		res.pSuccess([]);
-	}
+    siteDao.listPV(
+      { flyerID: { $in: uncachedIDs } },
+      function (err, uncachedSites) {
+        if (!err) {
+          // Cache the obtained data and set the expiration time
+          _.forEach(uncachedSites, function (site) {
+            cache.put(site.flyerID, site, config.CACHE.expire.flyerID); // 5min
+          });
+          var allSites = _.merge(uncachedSites, cachedSites);
+          res.pSuccess(allSites);
+        } else {
+          res.pSuccess([]);
+        }
+      }
+    );
+  } else {
+    res.pSuccess([]);
+  }
 };
 
-// 实时数据更新
-exports.updateRT = function(log, callback) {
-	var siteID = log.idsite,
-		EventCategory = log.e_c,
-		EventAction = log.e_a,
-		doc = {$inc: {}};
+// real-time data update
+exports.updateRT = function (log, callback) {
+  var siteID = log.idsite,
+    EventCategory = log.e_c,
+    EventAction = log.e_a,
+    doc = { $inc: {} };
 
-	if (EventCategory && EventAction) {
-		processWxShare(EventCategory, EventAction, doc);
-	} else {
-		processPV(log, doc);
-		processRef(log, doc);
-		uploadPV(siteID);
-	}
-	siteDao.update({_id: siteID}, doc, callback);
+  if (EventCategory && EventAction) {
+    processWxShare(EventCategory, EventAction, doc);
+  } else {
+    processPV(log, doc);
+    processRef(log, doc);
+    uploadPV(siteID);
+  }
+  siteDao.update({ _id: siteID }, doc, callback);
 };
 
-// 处理微信分享
+// handle WeChat sharing
 function processWxShare(EventCategory, EventAction, doc) {
-	if (EventCategory === 'flyer' && EventAction === 'wxShare') {
-		doc.$inc.wxShare = 1;
-	}
+  if (EventCategory === "flyer" && EventAction === "wxShare") {
+    doc.$inc.wxShare = 1;
+  }
 }
 
-// 处理 PV
+// handle PV
 function processPV(log, doc) {
-	doc.$inc.pv = log.weight;
-	doc.$inc._pv = 1;
+  doc.$inc.pv = log.weight;
+  doc.$inc._pv = 1;
 }
 
-// 处理 ref
+// handle ref
 function processRef(log, doc) {
-	var refType = util.getRef(log);
-	doc.$inc['ref.' + refType] = log.weight;
-	doc.$inc['_ref.' + refType] = 1;
+  var refType = util.getRef(log);
+  doc.$inc["ref." + refType] = log.weight;
+  doc.$inc["_ref." + refType] = 1;
 }
 
-
-// 上传 pv 至 echuandan 服务器
+// upload pv to echuandan server
 function uploadPV(siteID) {
-	siteDao.findByID(siteID, function(err, site) {
-		if (err) return;
-		if (site && site.updateTime && site.flyerID && util.diffMinutes(site.updateTime) > 10) {
-			// 更新PV最新上传时间
-			siteDao.update({
-				_id: siteID
-			}, {
-				updateTime: (new Date()).getTime()
-			}, function(err) {
-				if (err) console.log(err);
-			});
+  siteDao.findByID(siteID, function (err, site) {
+    if (err) return;
+    if (
+      site &&
+      site.updateTime &&
+      site.flyerID &&
+      util.diffMinutes(site.updateTime) > 10
+    ) {
+      // Update the latest upload time of PV
+      siteDao.update(
+        {
+          _id: siteID,
+        },
+        {
+          updateTime: new Date().getTime(),
+        },
+        function (err) {
+          if (err) console.log(err);
+        }
+      );
 
-			request.put({
-				url: config.HOST.ecd + '/api/flyers/' + site.flyerID + '/pv',
-				form: {
-					pv: site.pv
-				}
-			}, function(err, res, data){
-				if (err) console.log(err);
-			});
-		}
-	});
+      request.put(
+        {
+          url: config.HOST.ecd + "/api/flyers/" + site.flyerID + "/pv",
+          form: {
+            pv: site.pv,
+          },
+        },
+        function (err, res, data) {
+          if (err) console.log(err);
+        }
+      );
+    }
+  });
 }

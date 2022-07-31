@@ -1,9 +1,9 @@
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-	config  = context.config,
-	util    = context.util;
+var mongoose = require("mongoose"),
+  Schema = mongoose.Schema,
+  config = context.config,
+  util = context.util;
 
-// 索引
+// index
 // http://docs.mongodb.org/manual/core/index-compound/
 // {
 // 	"siteID" : 1,
@@ -11,30 +11,31 @@ var mongoose = require('mongoose'),
 // }
 
 var schema = new Schema({
-	siteID: {  //aID
-		type: String,
-		ref: 'site'
-	},
-	visitorID: String,
-	ref: String,
-	visitTS: {
-		type: Date,
-		get: util.dateTimeFormat,
-		default: Date.now
-	},
-	deviceType: Number,
-	os: Number,
-	browser: Number,
-	sr: String,
-	IP: String,
-	country: String,
-	province: String,
-	city: String,
-	channel: String,
-	weight: {
-		type: Number,
-		default: 1
-	}
+  siteID: {
+    //aID
+    type: String,
+    ref: "site",
+  },
+  visitorID: String,
+  ref: String,
+  visitTS: {
+    type: Date,
+    get: util.dateTimeFormat,
+    default: Date.now,
+  },
+  deviceType: Number,
+  os: Number,
+  browser: Number,
+  sr: String,
+  IP: String,
+  country: String,
+  province: String,
+  city: String,
+  channel: String,
+  weight: {
+    type: Number,
+    default: 1,
+  },
 });
 
-mongoose.model('visit', schema);
+mongoose.model("visit", schema);

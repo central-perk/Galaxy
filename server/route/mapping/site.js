@@ -1,20 +1,19 @@
-module.exports = function(app, router, mw, site) {
+module.exports = function (app, router, mw, site) {
+  // Get multiple page PVs, which are used in the background
+  router.get("/site/pv", site.listPV);
 
-	// 获取多个页面 PV，在后台被用到
-	router.get('/site/pv', site.listPV);
+  // Create the counted page
+  router.post("/site", site.create);
 
-	// 创建被统计页面
-	router.post('/site', site.create);
+  // Get information about a single page
+  router.get("/site/:siteID", site.getByID);
 
-	// 获取单个页面信息
-	router.get('/site/:siteID', site.getByID);
+  // Get a single page PV
+  router.get("/site/:siteID/pv", site.getPV);
 
-	// 获取单个页面 PV
-	router.get('/site/:siteID/pv', site.getPV);
+  // Get a single page source
+  router.get("/site/:siteID/ref", site.getRef);
 
-	// 获取单个页面来源
-	router.get('/site/:siteID/ref', site.getRef);
-
-	// 获取单个页面概况
-	router.get('/site/:siteID/overview', site.getOverview);
+  // Get an overview of a single page
+  router.get("/site/:siteID/overview", site.getOverview);
 };

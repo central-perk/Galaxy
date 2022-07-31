@@ -1,6 +1,4 @@
-module.exports = function(app, router, mw, main) {
-
-	// 收集统计数据
-	app.get('/collect', main.collect);
-
+module.exports = function (app, router, mw, main) {
+  // Gather statistics
+  app.get("/collect", main.collect);
 };

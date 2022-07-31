@@ -1,52 +1,55 @@
-var path 	= require('path'),
-	fs 		= require('fs-extra'),
-	cronJob = require('cron').CronJob,
-	request = require('request'),
-	async 	= require('async'),
-	moment 	= require('moment'),
-	config 	= context.config,
-	util 	= context.util,
-	filePath = context.filePath,
-	dirPath = context.dirPath,
-	CONFIG_DB 	= config.APP.db,
-	storageCtrl = util.getCtrl('storage'),
-	logFileCtrl = util.getCtrl('logFile'),
-	siteCtrl	= util.getCtrl('site'),
-	dbBackup 	= require(filePath['db-backup']);
+var path = require("path"),
+  fs = require("fs-extra"),
+  cronJob = require("cron").CronJob,
+  request = require("request"),
+  async = require("async"),
+  moment = require("moment"),
+  config = context.config,
+  util = context.util,
+  filePath = context.filePath,
+  dirPath = context.dirPath,
+  CONFIG_DB = config.APP.db,
+  storageCtrl = util.getCtrl("storage"),
+  logFileCtrl = util.getCtrl("logFile"),
+  siteCtrl = util.getCtrl("site"),
+  dbBackup = require(filePath["db-backup"]);
 
+// Execute 10s after starting the service
+var d = moment().add(5, "seconds"),
+  hour = d.hours(),
+  minute = d.minutes(),
+  second = d.seconds(),
+  after5s = second + " " + minute + " " + hour + " * * *";
 
-// 开启服务后10s执行
-var d = moment().add(5, 'seconds'),
-	hour = d.hours(),
-	minute = d.minutes(),
-	second = d.seconds(),
-	after5s = second + ' ' + minute + ' ' + hour + ' * * *';
-
-
-// // 数据库定时备份
+// // Database scheduled backup
 // var jobDBBackup = new cronJob(config.TIME.midnight, function () {
-// 	var dbBackupPath;
-// 	if (util.isPro()) {
-// 		dbBackupPath = path.join(dirPath.root, '..', 'mnt', 'vdc', 'db_backup');
-// 	} else {
-// 		dbBackupPath = path.join(dirPath.root, '..', 'analytics_backup', 'db');
-// 	}
+// var dbBackupPath;
+// if (util.isPro()) {
+// dbBackupPath = path.join(dirPath.root, '..', 'mnt', 'vdc', 'db_backup');
+// } else {
+// dbBackupPath = path.join(dirPath.root, '..', 'analytics_backup', 'db');
+// }
 
-// 	// 确保数据库备份文件夹存在
-// 	fs.ensureDirSync(dbBackupPath);
+// // Make sure the database backup folder exists
+// fs.ensureDirSync(dbBackupPath);
 
-// 	dbBackup.init({
-// 		// 备份数据存储父级目录
-// 		path: dbBackupPath,
-// 		// 数据库连接
-// 		host: CONFIG_DB.host + ':' + CONFIG_DB.port,
-// 		// 数据库名称
-// 		name: CONFIG_DB.name
-// 	});
+// dbBackup.init({
+// // Backup datastore parent directory
+// path: dbBackupPath,
+// 		// Database linkage
+// host: CONFIG_DB.host + ':' + CONFIG_DB.port,
+// 		// Name database
+// name: CONFIG_DB.name
+// });
 // }, null, true, 'Asia/Shanghai');
 
-
-// 日志文件定时清空
-var jobCleanLogFile = new cronJob(config.TIME.sunday, function () {
-	logFileCtrl.clean();
-}, null, true, 'Asia/Shanghai');
+// The log file is periodically cleared
+var jobCleanLogFile = new cronJob(
+  config.TIME.sunday,
+  function () {
+    logFileCtrl.clean();
+  },
+  null,
+  true,
+  "Asia/Shanghai"
+);

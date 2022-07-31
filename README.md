@@ -1,34 +1,34 @@
-# 易传单统计服务器
+# Easy Leaflet Statistics Server
 
-###描述
-- 收集作品运行时的统计数据
-- 向易传单服务提供数据接口
+###describe
+- Collect stats when the title is running
+- Provide data interface to Easy Leaflet service
 
 
 
-### 启动项目
+### Startup project
 
-- 启动 mongoDB
-- 启动 redis
-- sudo npm install 
+- start mongoDB
+- start redis
+- sudo npm install
 - gulp
 
-### 本地测试
+### local test
 
-修改 echuandan.com服务下config/config-dev.js下
+Modify config/config-dev.js under echuandan.com service
 
-```
+````
 module.exports = {
-	ANALYTICS: {
-		host: 'http://127.0.0.1:8005/',
-		_t: 'analytics',
-		API: {
-			CREATE_FLYER_AID: '/api/analytics/site'
-		}
-	}
+ANALYTICS: {
+host: 'http://127.0.0.1:8005/',
+_t: 'analytics',
+API: {
+CREATE_FLYER_AID: '/api/analytics/site'
+}
+}
 };
-```
+````
 
-### redis管理
+### redis management
 
-使用 [kue](https://github.com/Automattic/kue) 管理redis中处理任务的队列
+Use [kue](https://github.com/Automattic/kue) to manage the queue of processing tasks in redis

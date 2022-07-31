@@ -10,7 +10,6 @@ CONFIG = _.merge(CONFIG, CONFIG_ALL);
 CONFIG = _.merge(CONFIG, CONFIG_ENV);
 
 
-// 需要改进成遍历所有文件夹
 _.forEach(fs.readdirSync(__dirname), function(fileName) {
 	if (/\.js$/.test(fileName) && fileName !== 'index.js') {
 		CONFIG = _.merge(CONFIG, require(path.join(__dirname, fileName)));
