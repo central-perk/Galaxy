@@ -1,4 +1,4 @@
-# Easy Leaflet Statistics Server
+# Galaxy
 
 ### describe
 
@@ -31,3 +31,9 @@ module.exports = {
 ### redis management
 
 Use [kue](https://github.com/Automattic/kue) to manage the queue of processing tasks in redis
+
+### License
+
+Galaxy is distributed under the terms of MIT license.
+
+See LICENSE for details.
